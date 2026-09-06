@@ -52,6 +52,10 @@ number themselves.
   slm_advanced_lab.ipynb       three advanced labs: an evaluation harness with
                                slices and error bars, a mixture of experts analysis,
                                and a memory budget measured on your own machine
+  slm_advanced_lab_colab.ipynb the same three labs, but self contained for Google
+                               Colab: installs Ollama in the VM, pulls two small
+                               models and fetches the measurements. Nothing to
+                               install locally, which suits an online class
   moe_measurements.json        recorded measurements the mixture of experts lab
                                analyses, so nobody has to pull a large model
   check_setup.py               attendees run this before the workshop. Verifies
@@ -74,6 +78,7 @@ source/
   measure_moe.py               records moe_measurements.json on your own hardware
   make_usb.py                  builds a minimal model payload for USB distribution,
                                about 7.5 GB rather than the whole models directory
+  build_colab_nb.py            generates the Colab flavour of the advanced lab
 ```
 
 Content lives in the generators, so edit those and rebuild rather than editing the
