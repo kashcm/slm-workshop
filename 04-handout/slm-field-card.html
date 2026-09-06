@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLM Field Card</title>
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#F6F9F8;
+  --surface:#FFFFFF;
+  --sunk:#EDF2F1;
+  --ink:#0F1A1C;
+  --ink-2:#3A4B4D;
+  --ink-3:#6B7E80;
+  --rule:#D6E0DE;
+  --rule-2:#E6EDEC;
+  --sig:#C4400E;
+  --sig-soft:#FBEBE4;
+  --good:#0B6E56;
+  --good-soft:#E2F1EC;
+  --warn:#96620A;
+  --warn-soft:#F7EEDD;
+  --bad:#A3300B;
+  --bad-soft:#FAE3DA;
+  --shadow:0 1px 2px rgba(15,26,28,.05), 0 8px 24px -16px rgba(15,26,28,.25);
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B1315; --surface:#111C1E; --sunk:#162325;
+    --ink:#E8EFEE; --ink-2:#B3C3C2; --ink-3:#7E9291;
+    --rule:#243436; --rule-2:#1C2A2C;
+    --sig:#FB7742; --sig-soft:#2E1810;
+    --good:#4FC3A1; --good-soft:#0E2620;
+    --warn:#D9A441; --warn-soft:#2A2110;
+    --bad:#F2725A; --bad-soft:#2E1512;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B1315; --surface:#111C1E; --sunk:#162325;
+  --ink:#E8EFEE; --ink-2:#B3C3C2; --ink-3:#7E9291;
+  --rule:#243436; --rule-2:#1C2A2C;
+  --sig:#FB7742; --sig-soft:#2E1810;
+  --good:#4FC3A1; --good-soft:#0E2620;
+  --warn:#D9A441; --warn-soft:#2A2110;
+  --bad:#F2725A; --bad-soft:#2E1512;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:40px 24px 96px;
+  display:flex;flex-direction:column;gap:38px}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--sig)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,5.2vw,50px);
+  line-height:1.02;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lede{font-size:17px;color:var(--ink-2);max-width:62ch;margin:0}
+.constants{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.constant{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:5px}
+.constant b{font-family:var(--mono);font-size:23px;font-weight:600;
+  color:var(--sig);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.constant span{font-size:12.5px;color:var(--ink-3);line-height:1.4}
+
+/* ---------- sections ---------- */
+section{display:flex;flex-direction:column;gap:16px}
+.shead{display:flex;align-items:baseline;gap:12px;
+  border-bottom:1px solid var(--rule);padding-bottom:9px}
+.shead h2{font-family:var(--display);font-weight:600;font-size:20px;
+  letter-spacing:-.01em;margin:0;flex:1}
+.shead .tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.note{font-size:13.5px;color:var(--ink-3);max-width:74ch;margin:0}
+.note em{color:var(--ink-2)}
+
+/* ---------- ordered decision list ---------- */
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+ol.steps li{background:var(--surface);padding:15px 18px;
+  display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:start}
+ol.steps .n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--sig);
+  padding-top:2px;letter-spacing:.04em}
+ol.steps .q{font-weight:600;font-size:15.5px;display:block;margin-bottom:3px}
+ol.steps .a{font-size:14px;color:var(--ink-2)}
+ol.steps .a code{font-family:var(--mono);font-size:12.8px;background:var(--sunk);
+  padding:1px 5px;border-radius:2px;color:var(--ink)}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:560px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-2);vertical-align:top}
+thead th{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);background:var(--sunk);
+  border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td strong{font-weight:600}
+.hl{color:var(--sig);font-weight:600}
+.ok{color:var(--good);font-weight:600}
+.wn{color:var(--warn);font-weight:600}
+
+/* ---------- p^N heatmap ---------- */
+.grid{min-width:520px}
+.grid td.cell{font-family:var(--mono);font-variant-numeric:tabular-nums;
+  text-align:right;font-weight:500;white-space:nowrap}
+.c0{background:var(--bad-soft);color:var(--bad)}
+.c1{background:var(--sig-soft);color:var(--sig)}
+.c2{background:var(--warn-soft);color:var(--warn)}
+.c3{background:var(--good-soft);color:var(--good)}
+.grid td.lbl{font-weight:600;white-space:nowrap}
+.grid td.lbl small{display:block;font-weight:400;color:var(--ink-3);font-size:11.5px;
+  font-family:var(--body)}
+
+/* ---------- callout ---------- */
+.call{background:var(--sig-soft);border:1px solid var(--rule);border-radius:3px;
+  padding:16px 18px;font-size:14.5px;color:var(--ink)}
+.call b{font-weight:600}
+.call.g{background:var(--good-soft)}
+
+/* ---------- red flags ---------- */
+ul.flags{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+ul.flags li{background:var(--surface);padding:13px 16px;font-size:14px;
+  display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start}
+ul.flags li::before{content:"";width:8px;height:8px;margin-top:7px;border-radius:50%;
+  background:var(--sig)}
+ul.flags b{font-weight:600;display:block}
+ul.flags span{color:var(--ink-2);font-size:13.3px}
+
+/* ---------- command crib ---------- */
+pre{margin:0;font-family:var(--mono);font-size:12.8px;line-height:1.75;
+  background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  padding:16px 18px;overflow-x:auto;color:var(--ink)}
+pre .c{color:var(--ink-3)}
+pre .k{color:var(--sig)}
+
+/* ---------- rules list ---------- */
+ol.rules{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ol.rules li{display:grid;grid-template-columns:26px 1fr;gap:12px;font-size:14.2px}
+ol.rules .n{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink-3);
+  padding-top:3px}
+ol.rules b{font-weight:600}
+ol.rules span{color:var(--ink-2)}
+
+footer{border-top:1px solid var(--rule);padding-top:18px;font-size:12.5px;
+  color:var(--ink-3);display:flex;flex-direction:column;gap:6px}
+footer a{color:var(--ink-2)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--sig);outline-offset:2px}
+
+@media (max-width:640px){
+  .wrap{padding:28px 16px 64px;gap:30px}
+  ol.steps li{grid-template-columns:1fr;gap:4px}
+  ol.steps .n{padding-top:0}
+}
+@media print{
+  body{background:#fff}
+  .wrap{max-width:none;padding:0;gap:22px}
+  section{break-inside:avoid}
+  .constant b{color:#000}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <div class="eyebrow">Small Language Models &middot; Reference</div>
+    <h1>SLM Field Card</h1>
+    <p class="lede">Everything from the two-hour class on one page: how to size a small model,
+      when it is the right call, when it absolutely is not, and the numbers to check before you
+      commit engineering time.</p>
+    <div class="constants">
+      <div class="constant"><b>5 tok/s</b><span>Below this an interactive agent stops being tolerable on your hardware.</span></div>
+      <div class="constant"><b>7&ndash;9B</b><span>Floor for agentic tool use. Sub-4B is for classification and extraction only.</span></div>
+      <div class="constant"><b>p<sup>N</sup></b><span>End-to-end success compounds. Cut N before you buy parameters.</span></div>
+      <div class="constant"><b>~2M/day</b><span>Tokens below which self-hosting costs more in engineering than it saves.</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="shead"><h2>The decision sequence</h2><span class="tag">answer in order</span></div>
+    <ol class="steps">
+      <li><span class="n">01</span><div>
+        <span class="q">What is the task shape?</span>
+        <span class="a">Classification, extraction, routing, format conversion &rarr; sub-4B is fine.
+        Tool-calling agent &rarr; 7&ndash;9B floor. Planning, novel reasoning, cross-repo code &rarr; frontier.
+        Task shape decides model size, not the other way round.</span></div></li>
+      <li><span class="n">02</span><div>
+        <span class="q">What is N?</span>
+        <span class="a">Count the steps between checkpoints. Above roughly ten unverified steps,
+        decompose before you do anything else. Four verified 5-step segments need
+        <code>p = 0.979</code> each; one unverified 20-step run needs <code>0.995</code>.</span></div></li>
+      <li><span class="n">03</span><div>
+        <span class="q">What is your volume?</span>
+        <span class="a">Below ~2M tokens/day the engineering cost swamps the token savings.
+        Use a hosted model and revisit when the volume is real.</span></div></li>
+      <li><span class="n">04</span><div>
+        <span class="q">Do you have a non-cost reason to self-host?</span>
+        <span class="a">Sovereignty, a latency SLA, per-tenant weights, deprecation risk, air-gap.
+        If not, a cheap hosted small model captures most of the win with none of the ops.</span></div></li>
+      <li><span class="n">05</span><div>
+        <span class="q">Do you have a golden set?</span>
+        <span class="a">If not, you cannot answer any of the four questions above with evidence.
+        Build it first: 50&ndash;100 cases from real production traffic, 20% deliberately nasty.</span></div></li>
+    </ol>
+    <p class="note">Two of these are separate decisions that get conflated constantly.
+      <em>Small vs large</em> is nearly always a win on a narrow task. <em>Self-host vs API</em>
+      is a different question, and it is almost never won on token price.</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Sizing</h2><span class="tag">Q4_K_M quantisation</span></div>
+    <div class="scroll"><table>
+      <thead><tr>
+        <th>Class</th><th class="num">Weights</th><th class="num">Practical RAM</th>
+        <th>Runs comfortably on</th><th>Use it for</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="num"><strong>1B</strong></td><td class="num">0.7&ndash;1.3 GB</td><td class="num">3 GB</td>
+          <td>anything, including phones</td><td>Routing, intent, guardrails, PII screening</td></tr>
+        <tr><td class="num"><strong>3B</strong></td><td class="num">2.0&ndash;2.2 GB</td><td class="num">4&ndash;5 GB</td>
+          <td>an 8 GB laptop</td><td>Classification, extraction to a fixed schema, summarising bounded inputs</td></tr>
+        <tr><td class="num"><strong>7&ndash;8B</strong></td><td class="num">4.5&ndash;6.0 GB</td><td class="num">8 GB</td>
+          <td>a 16 GB laptop</td><td class="hl">The floor for tool-calling agents</td></tr>
+        <tr><td class="num"><strong>14B</strong></td><td class="num">~9 GB</td><td class="num">12&ndash;16 GB</td>
+          <td>16 GB minimum, 24 GB comfortable</td><td>Multi-tool agents, longer horizons, weaker prompts</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Budget <em>weights + ~1 GB runtime + KV cache</em>. KV cache is the one everyone
+      forgets &mdash; at 64K context it can exceed the weights. Generation speed is
+      memory-bandwidth bound, not compute bound, which is why an M4 barely beats an M2 and loses
+      to an M3 Pro.</p>
+    <div class="call"><b>Tool support is a property of the chat template, not the parameter count.</b>
+      A 70B with no tool template loses to a 1.7B that has one. Check the model card before you
+      check the leaderboard.</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>The compounding table</h2><span class="tag">end-to-end success = p<sup>N</sup></span></div>
+    <div class="scroll"><table class="grid">
+      <thead><tr>
+        <th>Per-step reliability</th>
+        <th class="num" style="text-align:right">N=1</th><th class="num" style="text-align:right">N=3</th>
+        <th class="num" style="text-align:right">N=5</th><th class="num" style="text-align:right">N=10</th>
+        <th class="num" style="text-align:right">N=20</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="lbl">p = 0.50 <small>a 4B on BFCL</small></td>
+          <td class="cell c2">50.0%</td><td class="cell c1">12.5%</td><td class="cell c0">3.1%</td>
+          <td class="cell c0">0.1%</td><td class="cell c0">0.0%</td></tr>
+        <tr><td class="lbl">p = 0.66 <small>a 9B on BFCL</small></td>
+          <td class="cell c2">66.0%</td><td class="cell c1">28.7%</td><td class="cell c1">12.5%</td>
+          <td class="cell c0">1.6%</td><td class="cell c0">0.0%</td></tr>
+        <tr><td class="lbl">p = 0.75 <small>best frontier on BFCL</small></td>
+          <td class="cell c3">75.0%</td><td class="cell c2">42.2%</td><td class="cell c1">23.7%</td>
+          <td class="cell c0">5.6%</td><td class="cell c0">0.3%</td></tr>
+        <tr><td class="lbl">p = 0.90 <small>with a validator</small></td>
+          <td class="cell c3">90.0%</td><td class="cell c3">72.9%</td><td class="cell c2">59.0%</td>
+          <td class="cell c1">34.9%</td><td class="cell c1">12.2%</td></tr>
+        <tr><td class="lbl">p = 0.95 <small>+ retries</small></td>
+          <td class="cell c3">95.0%</td><td class="cell c3">85.7%</td><td class="cell c3">77.4%</td>
+          <td class="cell c2">59.9%</td><td class="cell c1">35.8%</td></tr>
+        <tr><td class="lbl">p = 0.99 <small>+ constrained decoding, checkpoints</small></td>
+          <td class="cell c3">99.0%</td><td class="cell c3">97.0%</td><td class="cell c3">95.1%</td>
+          <td class="cell c3">90.4%</td><td class="cell c3">81.8%</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Per-step <em>p</em> required for 90% end-to-end success:
+      <strong>N=5 &rarr; 0.979 &nbsp;&middot;&nbsp; N=10 &rarr; 0.990 &nbsp;&middot;&nbsp;
+      N=20 &rarr; 0.995 &nbsp;&middot;&nbsp; N=50 &rarr; 0.998</strong>.
+      Nothing on any leaderboard is there &mdash; small or frontier.</p>
+    <div class="call"><b>Taken literally this table says nothing works, which is obviously false.</b>
+      The gap between it and production is exactly the engineering: retries, validators,
+      constrained decoding, checkpoints, and short verified segments instead of long unverified
+      ones. Reliability is an engineering outcome, not a model property &mdash; one production
+      system took its failure rate from ~14% to 0.4% with no model change at all.</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Quantisation</h2><span class="tag">the cheapest lever you have</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Level</th><th class="num">Size vs fp16</th><th>Quality</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="num">Q8_0</td><td class="num">~50%</td><td>effectively lossless</td><td class="ok">Safe anywhere</td></tr>
+        <tr><td class="num">Q5_K_M</td><td class="num">~35%</td><td>near-lossless (&Delta;ppl +0.014)</td><td class="ok">Safe anywhere</td></tr>
+        <tr><td class="num"><strong>Q4_K_M</strong></td><td class="num">~28%</td><td>&Delta;ppl +0.054, ~1% aggregate</td><td class="ok">The default. Start here.</td></tr>
+        <tr><td class="num">Q3_K_S</td><td class="num">~22%</td><td>HellaSwag &minus;0.6, <span class="hl">GSM8K &minus;9.3</span></td><td class="wn">Recall only, never agents</td></tr>
+        <tr><td class="num">Q2 and below</td><td class="num">&lt;20%</td><td>unreliable</td><td class="hl">Don't</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><em>Q4_K_M</em> means: 4-bit nominal, <em>K</em> for k-quants (super-blocks of 256,
+      sub-blocks of 32, each with its own quantised scale and min), <em>M</em> for medium mixed
+      precision (attention <code style="font-family:var(--mono)">wv</code> and FFN
+      <code style="font-family:var(--mono)">w2</code> kept at Q6_K). Net ~4.89 bits per weight
+      &mdash; "4-bit" is never four bits, and the overhead is what buys the quality.</p>
+    <div class="call"><b>Damage is task-dependent, not uniform.</b> Single-shot recall barely moves
+      as you quantise; chained reasoning falls off a cliff. Tool-argument construction and
+      multi-step arithmetic are chained reasoning. And if a QAT checkpoint exists for your model,
+      take it &mdash; it cuts the quality drop roughly in half, for free.</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Cost</h2><span class="tag">two independent decisions</span></div>
+    <pre><span class="c"># the whole self-hosting question in one line</span>
+<span class="k">$ per 1M tokens</span> = (GPU $/hr &divide; throughput tok/s) &times; 1e6 &divide; 3600 &divide; <span class="k">utilisation</span></pre>
+    <p class="note">Utilisation is the term everyone omits and it swings the answer <em>5&times;</em>:
+      same H100, same model &mdash; $0.20/1M at full load, $1.01/1M at 20%, $4.03/1M at 5%.
+      Your idle GPU is the biggest line item in a self-hosted quote and it never appears in the
+      vendor's comparison table.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Displacing</th><th class="num">Blended $/1M</th>
+        <th class="num">Break-even on one 4090 rig</th><th class="num">Per day</th></tr></thead>
+      <tbody>
+        <tr><td>a frontier model ($5 / $25)</td><td class="num">$9.00</td>
+          <td class="num ok">~57M tok/mo</td><td class="num">1.9M</td></tr>
+        <tr><td>a mid-tier model ($2 / $10)</td><td class="num">$3.60</td>
+          <td class="num ok">~146M tok/mo</td><td class="num">4.9M</td></tr>
+        <tr><td>a cheap fast model ($1 / $5)</td><td class="num">$1.80</td>
+          <td class="num wn">~305M tok/mo</td><td class="num">10M</td></tr>
+        <tr><td>a cheap <em>hosted small</em> model</td><td class="num">$0.40</td>
+          <td class="num hl">~2,000M tok/mo</td><td class="num">67M</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Assumes agent traffic at 80% input / 20% output and a ~$504/month rig.
+      Then add the real total: hardware $1,000 + power and colocation $831 +
+      <strong>25% of one engineer $4,000</strong> &asymp; $5,931/month.
+      <em>Staffing is 6&ndash;30&times; the hardware</em> &mdash; and that total lands at roughly the
+      price of the hosted API it was meant to beat.</p>
+    <div class="call g"><b>What actually justifies self-hosting:</b> regulation (EU AI Act high-risk
+      obligations took effect 2 August 2026), data sovereignty, a latency SLA where 15s &rarr; 0.15s
+      is a different product, per-tenant fine-tuned weights via multi-LoRA, and freedom from
+      silent vendor deprecation. Not token price.</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Red flags</h2><span class="tag">reach for a bigger model</span></div>
+    <ul class="flags">
+      <li><div><b>Horizon beyond ~10 unverified steps</b><span>The compounding math is unforgiving. Decompose or escalate.</span></div></li>
+      <li><div><b>Broad world knowledge required</b><span>You cannot fine-tune in facts the model does not have.</span></div></li>
+      <li><div><b>Code generation across a large repo</b><span>Needs long context and long horizon at the same time.</span></div></li>
+      <li><div><b>Ambiguous or novel reasoning</b><span>Fine-tuning specialises; it does not generalise to the case you did not anticipate.</span></div></li>
+      <li><div><b>Very long context</b><span>Degradation hits everyone, but small models start lower and hit the wall sooner.</span></div></li>
+      <li><div><b>Low volume</b><span>Below ~2M tokens/day the engineering cost swamps the savings.</span></div></li>
+      <li><div><b>A single failure is expensive</b><span>Irreversible actions, money movement, customer commitments. Even frontier models roughly halve from pass@1 to pass^8.</span></div></li>
+      <li><div><b>Multilingual breadth</b><span>Capability concentrates in high-resource languages as parameters shrink.</span></div></li>
+      <li><div><b>Safety-critical generation</b><span>Note the asymmetry: small models are excellent at safety <em>classification</em>, weaker at safety <em>alignment</em> under pressure.</span></div></li>
+      <li><div><b>You have no golden set</b><span>You will not be able to tell whether the swap was safe. This is how SLM projects actually die.</span></div></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Patterns that ship</h2><span class="tag">production-verified</span></div>
+    <div class="scroll"><table>
+      <thead><tr><th>Pattern</th><th>What it is</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Cascade</strong></td>
+          <td>Rules &rarr; small model &rarr; escalate on a <em>validator's verdict</em>, never on the model's self-reported confidence.</td>
+          <td>1.5M checks/mo: 98% by logistic regression, 2% by a tuned 8B. 80&ndash;82% &rarr; 90% accuracy, 15s &rarr; 0.15s, $12k/mo &rarr; &lt;$800.</td></tr>
+        <tr><td><strong>Heterogeneous</strong></td>
+          <td>SLM for the mechanical high-frequency work; frontier model for planning and error recovery.</td>
+          <td>Agent frameworks estimate 40&ndash;70% of calls are replaceable.</td></tr>
+        <tr><td><strong>Frontier as offline teacher</strong></td>
+          <td>The big model manufactures training data; the small model runs in the hot path and the big one never appears at inference.</td>
+          <td>An 8B edit-prediction model distilled from a frontier teacher: +30% acceptance rate.</td></tr>
+        <tr><td><strong>Guardrails as SLMs</strong></td>
+          <td>Safety and PII classification is a small-model job.</td>
+          <td>Across 14 guard models 110M&ndash;20B: correlation of size with detection r=0.21, p=0.48. A 4B had 3.4&times; the recall of a 20B.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Evaluation</h2><span class="tag">the part that decides whether it ships</span></div>
+    <ol class="rules">
+      <li><span class="n">01</span><div><b>Score per tag, never just the average.</b>
+        <span>If 90% of your cases are happy-path, your average looks great while every hard case quietly fails.</span></div></li>
+      <li><span class="n">02</span><div><b>Source cases from production failures, not imagination.</b>
+        <span>Instrument for thumbs-down, abandonment and escalation. Triage weekly. Prune cases testing behaviour you deliberately removed.</span></div></li>
+      <li><span class="n">03</span><div><b>Size it honestly.</b>
+        <span>50&ndash;100 cases for one feature. 150&ndash;300 for a maturing product. 400+ for a regulated flow. 15&ndash;25% deliberately nasty.</span></div></li>
+      <li><span class="n">04</span><div><b>Validate the judge before you trust it.</b>
+        <span>Across 21 judge models, chance-corrected agreement ran 34&ndash;41 points below raw agreement &mdash; the best scored 84.9% raw but 51.1% kappa. Give it a specific rubric, randomise A/B order, check against ~50 human labels. Several judges were perfectly reproducible while carrying severe position bias: reproducibility is not validity.</span></div></li>
+      <li><span class="n">05</span><div><b>&plusmn;1 point on a 200-item set is noise.</b>
+        <span>Quantised models sometimes "beat" fp16 on a benchmark. That is variance, not a discovery.</span></div></li>
+    </ol>
+    <p class="note">Tooling: <em>promptfoo</em> for a model bake-off &middot; <em>deepeval</em> for CI gates
+      &middot; <em>lm-evaluation-harness</em> for academic benchmarks only &middot; <em>ragas</em> for RAG.</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Crib</h2><span class="tag">local setup</span></div>
+    <pre><span class="c"># the single most important line: Ollama defaults to a 4K context on</span>
+<span class="c"># machines under 24GB VRAM, which silently truncates your tool schemas</span>
+OLLAMA_CONTEXT_LENGTH=32000 ollama serve
+
+ollama pull granite4.2:3b          <span class="c"># 2.2 GB  workhorse, tools + JSON schema</span>
+ollama pull granite4.2:8b          <span class="c"># 5.3 GB  escalation target</span>
+ollama pull lfm2.5-thinking:1.2b   <span class="c"># 731 MB  runs on almost anything</span>
+
+<span class="c"># OpenAI-compatible endpoint. api_key is required but ignored.</span>
+<span class="k">http://localhost:11434/v1/</span>   <span class="c"># tool_choice is NOT supported here</span>
+
+<span class="c"># native API: structured output via a full JSON Schema in "format",</span>
+<span class="c"># tools via "tools", and real timing counters in the response</span>
+POST <span class="k">http://localhost:11434/api/chat</span>
+
+<span class="c"># fine-tuning: r=32, alpha=64, lr=2e-4, 1-3 epochs, all seven projections</span>
+<span class="c"># q,k,v,o,gate,up,down  -- attention-only underperforms</span>
+<span class="c"># QLoRA VRAM: 3B in 3.5GB, 8B in 6GB. Both fit a free Colab T4.</span>
+<span class="c"># Data: 100-300 examples per class for routing, 200-500 for extraction.</span></pre>
+    <p class="note">Model tags move fast &mdash; verify the exact tag and file size before you rely on
+      one. Note that a bare tag is often Q8_0, not Q4; ask for
+      <code style="font-family:var(--mono)">-q4_K_M</code> explicitly when size matters.</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Converting an existing LLM call</h2><span class="tag">six steps, and the first is the gate</span></div>
+    <ol class="steps">
+      <li><span class="n">01</span><div><span class="q">Log everything</span>
+        <span class="a">Every non-user-facing call: prompt, response, tool calls, latency. Encrypted. Without traces there is no project.</span></div></li>
+      <li><span class="n">02</span><div><span class="q">Curate</span>
+        <span class="a">Strip PII and PHI. Target 10k&ndash;100k examples.</span></div></li>
+      <li><span class="n">03</span><div><span class="q">Cluster</span>
+        <span class="a">Unsupervised clustering over prompts and operations. The clusters are your specialisation candidates.</span></div></li>
+      <li><span class="n">04</span><div><span class="q">Select a model</span>
+        <span class="a">Capability, licence, deployment footprint &mdash; in that order.</span></div></li>
+      <li><span class="n">05</span><div><span class="q">Fine-tune</span>
+        <span class="a">LoRA or QLoRA, or distil from the model you are replacing.</span></div></li>
+      <li><span class="n">06</span><div><span class="q">Iterate</span>
+        <span class="a">Retrain as usage drifts.</span></div></li>
+    </ol>
+    <div class="call"><b>One action item:</b> turn on structured trace logging this week.
+      Everything else on this card is downstream of it.</div>
+  </section>
+
+  <footer>
+    <div>Sources for every number here: NVIDIA <em>Small Language Models are the Future of Agentic AI</em>
+      (arXiv 2506.02153) &middot; <em>The Illusion of Diminishing Returns</em> (arXiv 2509.09677) &middot;
+      &tau;-bench (arXiv 2406.12045) &middot; <em>Benchmarking Open-Source Safety Guard Models</em>
+      (arXiv 2605.28830) &middot; Berkeley function-calling leaderboard &middot; llama.cpp quantisation
+      benchmarks &middot; Unsloth LoRA guide &middot; Ollama documentation.</div>
+    <div>Model tags, API prices and leaderboard positions change fast. Re-verify anything you are
+      about to put in a business case.</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

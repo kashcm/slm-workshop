@@ -1,0 +1,555 @@
+<title>When Prompting Runs Out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F6F9F8; --surface:#FFFFFF; --sunk:#EDF2F1;
+    --ink:#0F1A1C; --ink-2:#42524F; --ink-3:#6E807C;
+    --rule:#D6E0DE; --rule-strong:#B9C7C4;
+    --sig:#C4400E; --sig-soft:#FBEBE4;
+    --good:#0B6E56; --good-soft:#E2F1EC;
+    --warn:#96620A; --warn-soft:#F7EEDD;
+    --bad:#A3300B; --bad-soft:#FAE3DA;
+    --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --body:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Courier New",monospace;
+    --shadow:0 1px 2px rgba(15,26,28,.05), 0 8px 24px -16px rgba(15,26,28,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0B1315; --surface:#111C1E; --sunk:#162427;
+      --ink:#E8F0EE; --ink-2:#AFC0BC; --ink-3:#7F918D;
+      --rule:#223437; --rule-strong:#31474B;
+      --sig:#F0794A; --sig-soft:#2A150E;
+      --good:#4FBF9B; --good-soft:#0C231C;
+      --warn:#DFAB55; --warn-soft:#2A2113;
+      --bad:#EE8156; --bad-soft:#2B1410;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0B1315; --surface:#111C1E; --sunk:#162427;
+    --ink:#E8F0EE; --ink-2:#AFC0BC; --ink-3:#7F918D;
+    --rule:#223437; --rule-strong:#31474B;
+    --sig:#F0794A; --sig-soft:#2A150E;
+    --good:#4FBF9B; --good-soft:#0C231C;
+    --warn:#DFAB55; --warn-soft:#2A2113;
+    --bad:#EE8156; --bad-soft:#2B1410;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--ink); font-family:var(--body);
+    font-size:16px; line-height:1.6; margin:0; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 26px 100px}
+  .col{max-width:66ch}
+
+  .mast{padding:60px 0 30px; border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--sig); margin:0 0 16px}
+  h1{font-family:var(--display); font-weight:700; font-size:clamp(38px,6.6vw,64px);
+    line-height:1.04; letter-spacing:-.022em; margin:0 0 16px; text-wrap:balance}
+  .standfirst{font-size:18px; color:var(--ink-2); max-width:60ch; margin:0}
+
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:1px; background:var(--rule); border:1px solid var(--rule);
+    margin:32px 0 0; border-radius:4px; overflow:hidden; box-shadow:var(--shadow)}
+  .stat{background:var(--surface); padding:15px 16px}
+  .stat b{display:block; font-family:var(--mono); font-size:21px; font-weight:600;
+    letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+  .stat span{font-size:12px; color:var(--ink-3); display:block; margin-top:3px}
+
+  section{padding:52px 0 6px; border-top:1px solid var(--rule); margin-top:44px}
+  section:first-of-type{border-top:none}
+  .pnum{font-family:var(--mono); font-size:11.5px; letter-spacing:.14em;
+    color:var(--sig); text-transform:uppercase; margin:0 0 9px}
+  h2{font-family:var(--display); font-weight:600; font-size:clamp(26px,3.6vw,36px);
+    line-height:1.14; letter-spacing:-.015em; margin:0 0 14px; text-wrap:balance}
+  h3{font-family:var(--display); font-size:16px; font-weight:600; margin:30px 0 9px}
+  p{margin:0 0 14px; max-width:66ch}
+  ul,ol{margin:0 0 14px; padding-left:20px; max-width:66ch}
+  li{margin-bottom:7px}
+  code{font-family:var(--mono); font-size:.88em; background:var(--sunk);
+    padding:1.5px 5px; border-radius:3px}
+  a{color:var(--sig)}
+
+  .fork{background:var(--surface); border:1px solid var(--rule); border-left:3px solid var(--sig);
+    border-radius:4px; padding:20px 22px; margin:24px 0; box-shadow:var(--shadow)}
+  .fork .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--sig); margin:0 0 8px}
+  .fork h4{font-family:var(--display); font-size:17px; margin:0 0 11px; font-weight:600}
+  .fork p:last-child{margin-bottom:0}
+  .verdict{display:inline-block; font-family:var(--mono); font-size:11.5px;
+    background:var(--sig-soft); color:var(--sig); padding:3px 9px; border-radius:3px; margin-top:4px}
+
+  .trap{background:var(--warn-soft); border:1px solid var(--rule); border-left:3px solid var(--warn);
+    border-radius:4px; padding:17px 20px; margin:22px 0}
+  .trap .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--warn); margin:0 0 7px}
+  .trap p{margin-bottom:0; color:var(--ink)}
+  .trap p + p{margin-top:9px}
+
+  .scroll{overflow-x:auto; margin:20px 0; border:1px solid var(--rule);
+    border-radius:4px; box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; font-size:14px; background:var(--surface)}
+  th,td{padding:10px 13px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600; background:var(--sunk); white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+  .good{color:var(--good); font-weight:600}
+  .poor{color:var(--bad); font-weight:600}
+
+  figure{margin:30px 0; max-width:100%}
+  figure svg{display:block; width:100%; height:auto; background:var(--surface);
+    border:1px solid var(--rule); border-radius:4px}
+  figcaption{font-size:13px; color:var(--ink-3); margin-top:9px; max-width:64ch}
+  .box{fill:var(--sunk); stroke:var(--rule-strong)}
+  .lab{fill:var(--ink); font-family:var(--body); font-size:12.5px}
+  .lab-s{fill:var(--ink-3); font-family:var(--mono); font-size:10.5px}
+  .edge{stroke:var(--ink-3); fill:none; stroke-width:1.4}
+
+  .check{background:var(--surface); border:1px solid var(--rule); border-radius:4px;
+    padding:6px 0; margin:22px 0; box-shadow:var(--shadow)}
+  .check div{padding:10px 20px 10px 44px; position:relative; font-size:14.5px;
+    border-bottom:1px solid var(--rule)}
+  .check div:last-child{border-bottom:none}
+  .check div::before{content:""; position:absolute; left:20px; top:15px; width:11px; height:11px;
+    border:1.5px solid var(--sig); border-radius:2px}
+  .pull{font-family:var(--display); font-size:22px; line-height:1.3; font-weight:500;
+    color:var(--ink); border-left:3px solid var(--sig); padding-left:20px;
+    margin:30px 0; max-width:50ch}
+  .closing{border-top:2px solid var(--ink); margin-top:50px; padding-top:30px}
+  .kicker{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin:0 0 6px}
+  @media (max-width:640px){ .wrap{padding:0 17px 70px} }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Small Language Models · Deep dive · Companion to the field card</p>
+  <h1>When Prompting Runs Out</h1>
+  <p class="standfirst">The class says fix the architecture before you buy parameters. This is what to do in the minority of cases where architecture is already right and the model still won't conform, a complete fine-tuning run, with the decisions and the traps, drawn from a real project.</p>
+  <div class="stats">
+    <div class="stat"><b>18 → 97%</b><span>Schema conformance</span></div>
+    <div class="stat"><b>~1,100</b><span>Training pairs</span></div>
+    <div class="stat"><b>~80 min</b><span>On a laptop</span></div>
+    <div class="stat"><b>$0</b><span>GPU spend</span></div>
+    <div class="stat"><b>2.1 GB</b><span>Shipped model</span></div>
+  </div>
+</header>
+
+<section>
+  <p class="pnum">Question 06</p>
+  <h2>Where this sits in the decision sequence</h2>
+  <div class="col">
+    <p>The field card gives you five questions: task shape, <code>N</code>, volume, a non-cost reason to self-host, and whether you have a golden set. Fine-tuning is question six, and it is only reachable once the first five have been answered honestly.</p>
+    <p>The reason is the class thesis restated: <strong>fine-tuning does not raise per-step reliability the way decomposition does.</strong> Cutting <code>N</code> from twenty steps to four verified segments moves your end-to-end success rate more than any adapter will. If you fine-tune to avoid decomposing, you have bought a smaller gain at a much higher maintenance cost, you now own a model, a dataset, an eval harness, and a retraining obligation forever.</p>
+    <p>So reach for it only when all of the following hold:</p>
+    <ul>
+      <li>The task is decomposed already, and each step is verified.</li>
+      <li>A cheap structural fix hasn't worked: constrained decoding, a grammar, few-shot examples, a repair-and-retry pass, or a validator that escalates to a bigger model.</li>
+      <li>The remaining failure is <strong>shape, not thinking</strong>, see the test below.</li>
+      <li>You have a golden set, because it is about to become both your training data and your evidence.</li>
+    </ul>
+  </div>
+
+  <div class="fork">
+    <p class="lbl">Decision · the classification that governs everything</p>
+    <h4>Format, domain, or reasoning?</h4>
+    <p><strong>Format.</strong> The model understands the task but emits the wrong shape, invalid JSON, wrong field names, a chatty preamble that breaks your parser. Ideal fine-tuning target. Converges fast, on few examples, and improves dramatically.</p>
+    <p><strong>Domain.</strong> Well-formed output that doesn't use your vocabulary or conventions. Fine-tuning helps moderately, with a few hundred good examples.</p>
+    <p><strong>Reasoning.</strong> The model genuinely cannot work the answer out. <strong>Fine-tuning will not fix this.</strong> Decompose further, add tools or retrieval, or escalate to a bigger model.</p>
+    <p><span class="verdict">Test: can a peer model of the same size do it? If yes → format. If no model at that size can → reasoning.</span></p>
+  </div>
+
+  <div class="col">
+    <p>That test is the cheapest diagnostic available and it costs one afternoon. In the project this guide is drawn from, one 3B model produced malformed structured output while a similar-sized model succeeded on identical prompts. That single comparison reclassified the problem from "this model is too small" to "this model doesn't know our shape", and only the second is fixable by training.</p>
+    <p class="pull">Decomposition buys reliability. Fine-tuning buys conformance. Do not use one to pay for the other.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 01</p>
+  <h2>Pick the base, then prove the toolchain</h2>
+  <div class="col">
+    <p>Choose the base model before building data, it fixes your memory ceiling, your tooling, and your licence story.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Criterion</th><th>Why it decides things</th></tr></thead>
+      <tbody>
+        <tr><td>Licence</td><td>Permissive licences sometimes carry an extra use-policy layered on top. Read both.</td></tr>
+        <tr><td>Architecture</td><td>Determines which layers an adapter can attach to. A hybrid or state-space model silently trains almost nothing under an attention-only config.</td></tr>
+        <tr><td>Size</td><td>Sets training memory and serving speed. Respect the class's floors: sub-4B for extraction and classification, 7–9B before agentic tool use.</td></tr>
+        <tr><td>Tooling maturity</td><td>A model your stack cannot load is worth zero, whatever the leaderboard says.</td></tr>
+        <tr><td>Behaviour switches</td><td>Reasoning modes change output shape entirely. You must be able to turn thinking off for structured output.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="trap">
+    <p class="lbl">Trap · your knowledge of the model landscape is stale</p>
+    <p>Model families change architecture between generations. In this project the plan named a model that had been superseded weeks earlier, and the newer generation was a plain dense transformer where the previous one had been a hybrid design. The adapter configuration that was correct for one would have quietly under-trained on the other.</p>
+    <p><strong>Rule:</strong> verify the current release and read the architecture section of the model card, every time. Never carry a model choice forward from a document written months ago.</p>
+  </div>
+
+  <div class="col">
+    <h3>Then smoke-test the whole chain on throwaway data</h3>
+    <p>The most common way these projects die is discovering three weeks in that some link doesn't support your model. Before building any dataset, push a few dozen junk examples all the way through: convert the base, train fifty steps, merge the adapter, convert to your serving format, quantise, start the server, get one completion back. You are not testing learning. You are testing that every link exists. An hour here routinely saves a week.</p>
+  </div>
+
+  <div class="trap">
+    <p class="lbl">Trap · silent empty output</p>
+    <p>A reasoning-capable model asked a trivial question returned <em>empty</em> text. Nothing was broken: it had spent its whole token budget thinking, and the server put that in a separate field. When a model returns nothing, check for a reasoning field before debugging anything else, and confirm your "disable thinking" switch is actually being honoured, because a server that isn't configured for it will accept the option and ignore it.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 02</p>
+  <h2>Find the gold, and learn what was actually stored</h2>
+  <div class="col">
+    <p>Training data for an existing capability usually already exists: it is the output your current system has been producing all along. Most operational products share one shape, conventional machinery aggregates raw signals into an episode, a model turn consumes that episode, and humans annotate the result afterwards.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 900 290" role="img" aria-label="Raw signals are aggregated by conventional machinery into an episode, which feeds language-model capabilities whose stored outputs become training gold, while human annotations return as context and evaluation signal.">
+      <defs><marker id="g1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+      <g color="var(--ink-3)">
+        <text class="lab-s" x="20" y="26">CONVENTIONAL MACHINERY, never a fine-tuning target</text>
+        <rect class="box" x="20" y="38" width="128" height="50" rx="4"/>
+        <text class="lab" x="84" y="60" text-anchor="middle">Raw signals</text>
+        <text class="lab-s" x="84" y="77" text-anchor="middle">very high volume</text>
+        <line class="edge" x1="148" y1="63" x2="192" y2="63" marker-end="url(#g1)"/>
+        <text class="lab-s" x="170" y="55" text-anchor="middle">aggregate</text>
+        <rect class="box" x="192" y="38" width="128" height="50" rx="4"/>
+        <text class="lab" x="256" y="60" text-anchor="middle">Episode</text>
+        <text class="lab-s" x="256" y="77" text-anchor="middle">the unit of work</text>
+        <line class="edge" x1="256" y1="88" x2="256" y2="126" marker-end="url(#g1)"/>
+        <text class="lab-s" x="266" y="112">input to every capability</text>
+
+        <text class="lab-s" x="20" y="120" fill="var(--sig)">MODEL TURN, the fine-tuning surface</text>
+        <rect x="20" y="130" width="144" height="46" rx="4" fill="var(--sig-soft)" stroke="var(--sig)" stroke-width="1.4"/>
+        <text class="lab" x="92" y="158" text-anchor="middle">Capability A</text>
+        <rect x="180" y="130" width="144" height="46" rx="4" fill="var(--sig-soft)" stroke="var(--sig)" stroke-width="1.4"/>
+        <text class="lab" x="252" y="158" text-anchor="middle">Capability B</text>
+        <rect x="340" y="130" width="144" height="46" rx="4" fill="var(--sig-soft)" stroke="var(--sig)" stroke-width="1.4"/>
+        <text class="lab" x="412" y="158" text-anchor="middle">Capability C</text>
+
+        <line class="edge" x1="484" y1="153" x2="536" y2="153" marker-end="url(#g1)"/>
+        <text class="lab-s" x="510" y="145" text-anchor="middle">emits</text>
+        <rect x="536" y="120" width="164" height="66" rx="4" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.4"/>
+        <text class="lab" x="618" y="145" text-anchor="middle" style="font-weight:600">Stored output</text>
+        <text class="lab-s" x="618" y="162" text-anchor="middle" fill="var(--good)">YOUR GOLD</text>
+        <text class="lab-s" x="618" y="177" text-anchor="middle">but post-processed</text>
+
+        <rect class="box" x="730" y="120" width="150" height="66" rx="4"/>
+        <text class="lab" x="805" y="145" text-anchor="middle">Human notes</text>
+        <text class="lab-s" x="805" y="162" text-anchor="middle">ground truth</text>
+        <text class="lab-s" x="805" y="177" text-anchor="middle">rarely indexed</text>
+        <line class="edge" x1="730" y1="153" x2="704" y2="153"/>
+        <path class="edge" d="M 805 186 L 805 228 L 256 228 L 256 186" stroke-dasharray="4 3" marker-end="url(#g1)"/>
+        <text class="lab-s" x="530" y="245" text-anchor="middle">annotations return as retrieval context AND as your evaluation signal</text>
+      </g>
+    </svg>
+    <figcaption>The shape most operational AI products share. Aggregation and correlation are conventional machinery, not fine-tuning targets. The green box is your gold, and the caveat on it is the trap below.</figcaption>
+  </figure>
+
+  <div class="trap">
+    <p class="lbl">Trap · stored output is not model output</p>
+    <p>The records in a datastore are usually not what the model emitted. They are what the system stored <em>after</em> parsing, validating, renaming fields and adding envelope metadata. In this project, field names had been converted between naming conventions and routing identifiers added that no model ever produced.</p>
+    <p>Train on stored records and you teach the model the <em>database's</em> shape rather than the shape your parser accepts, a poisoning that passes every check you write against the database and fails in production.</p>
+    <p><strong>Rule:</strong> find the exact function where the model's raw text is parsed. Whatever goes <em>into</em> it is your training target. Write an explicit transform from stored shape back to emitted shape and verify one example by hand.</p>
+  </div>
+
+  <div class="col">
+    <h3>Interrogate any candidate gold source</h3>
+    <ul>
+      <li><strong>Raw emission or processed artefact?</strong> Assume processed until proven otherwise.</li>
+      <li><strong>Is it actually good?</strong> Output from a strong model that drove real successful outcomes is trustworthy. Unchecked output is just old text.</li>
+      <li><strong>Is the matching input recoverable?</strong> Outputs without inputs are half a dataset, and this is usually the hard part.</li>
+      <li><strong>How much is there?</strong> Hundreds for conformance, thousands for domain adaptation. Count before you build.</li>
+      <li><strong>Privacy and licence?</strong> Operational data needs scrubbing and a defensible handling story before it becomes weights.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 03</p>
+  <h2>Recovering the prompts</h2>
+  <div class="col">
+    <p>Supervised fine-tuning needs <em>(prompt, answer)</em> pairs. Systems log what they produced, almost never what they asked, in this project there were thousands of stored answers and <strong>zero</strong> stored prompts, because the prompt logger kept data in memory only and cleared it every few minutes.</p>
+    <p>So the prompts must be regenerated. There are three ways, and the choice sets your dataset's fidelity.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 900 330" role="img" aria-label="Three ways to recover prompts: rebuilding templates by hand gives approximate prompts, replaying through a live model gives the model's own answers, and teacher-forced replay captures the real prompt with the stored gold answer.">
+      <defs><marker id="g2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+      <g color="var(--ink-3)">
+        <text class="lab" x="20" y="24" style="font-weight:600">A · Rebuild prompts by hand from templates</text>
+        <rect class="box" x="20" y="36" width="118" height="42" rx="4"/>
+        <text class="lab" x="79" y="62" text-anchor="middle">Templates</text>
+        <line class="edge" x1="138" y1="57" x2="180" y2="57" marker-end="url(#g2)"/>
+        <rect class="box" x="180" y="36" width="118" height="42" rx="4"/>
+        <text class="lab" x="239" y="62" text-anchor="middle">Guessed input</text>
+        <line class="edge" x1="298" y1="57" x2="340" y2="57" marker-end="url(#g2)"/>
+        <rect x="340" y="36" width="118" height="42" rx="4" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.4"/>
+        <text class="lab" x="399" y="62" text-anchor="middle">Approximate</text>
+        <text class="lab-s" x="474" y="61" fill="var(--bad)">drifts from what the model really sees</text>
+
+        <text class="lab" x="20" y="124" style="font-weight:600">B · Replay through a live model</text>
+        <rect class="box" x="20" y="136" width="118" height="42" rx="4"/>
+        <text class="lab" x="79" y="162" text-anchor="middle">Real prompt</text>
+        <line class="edge" x1="138" y1="157" x2="180" y2="157" marker-end="url(#g2)"/>
+        <rect class="box" x="180" y="136" width="118" height="42" rx="4"/>
+        <text class="lab" x="239" y="162" text-anchor="middle">Model runs</text>
+        <line class="edge" x1="298" y1="157" x2="340" y2="157" marker-end="url(#g2)"/>
+        <rect x="340" y="136" width="118" height="42" rx="4" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.4"/>
+        <text class="lab" x="399" y="162" text-anchor="middle">Its own answer</text>
+        <text class="lab-s" x="474" y="155" fill="var(--bad)">trains on the student, not the gold</text>
+        <text class="lab-s" x="474" y="171" fill="var(--bad)">and pays full inference per record</text>
+
+        <text class="lab" x="20" y="224" style="font-weight:600">C · Teacher-forced replay</text>
+        <rect class="box" x="20" y="236" width="118" height="42" rx="4"/>
+        <text class="lab" x="79" y="262" text-anchor="middle">Real prompt</text>
+        <line class="edge" x1="138" y1="257" x2="180" y2="257" marker-end="url(#g2)"/>
+        <rect x="180" y="236" width="118" height="42" rx="4" fill="var(--sig-soft)" stroke="var(--sig)" stroke-width="1.6"/>
+        <text class="lab" x="239" y="256" text-anchor="middle" style="font-weight:600">Intercept</text>
+        <text class="lab-s" x="239" y="271" text-anchor="middle" fill="var(--sig)">return gold</text>
+        <line class="edge" x1="298" y1="257" x2="340" y2="257" marker-end="url(#g2)"/>
+        <rect x="340" y="236" width="118" height="42" rx="4" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.4"/>
+        <text class="lab" x="399" y="262" text-anchor="middle">Real + gold</text>
+        <text class="lab-s" x="474" y="255" fill="var(--good)">exact prompt, true gold answer,</text>
+        <text class="lab-s" x="474" y="271" fill="var(--good)">no inference, minutes, not days</text>
+        <path class="edge" d="M 239 278 L 239 300 L 79 300 L 79 280" stroke-dasharray="4 3" marker-end="url(#g2)"/>
+        <text class="lab-s" x="256" y="304">the injected answer steers the next decision, so the agent walks its original path</text>
+      </g>
+    </svg>
+    <figcaption>The options differ in <em>where each half of the pair comes from</em>. Only C gets the real prompt and the true gold together. The dashed edge is the mechanism: feeding back the recorded answer makes a branching agent take the branches it originally took.</figcaption>
+  </figure>
+
+  <div class="fork">
+    <p class="lbl">Decision · pairing method</p>
+    <h4>Teacher-forced replay, whenever a runnable system exists</h4>
+    <p>Run the real system over reconstructed inputs, but intercept the one function that calls the model. Instead of calling out, return the recorded answer, and log the prompt the system just built alongside it. Byte-exact prompts, genuine gold, no inference cost, minutes instead of days.</p>
+    <p>Key the lookup by <strong>step type and subject</strong>, never by position, so divergence cannot silently misalign pairs. When no gold matches a call, fall through or skip, <strong>never fabricate a pair</strong>. Reconcile expected against produced counts per step type afterwards; a step yielding zero while gold exists is a reconstruction bug, not missing data.</p>
+    <p><span class="verdict">Use A only with no runnable system · B only with no stored gold</span></p>
+  </div>
+
+  <div class="col">
+    <p>Be honest about reconstruction fidelity. Where a rebuilt input carries forward the original system's own conclusions as "evidence", the prompt contains part of its own answer. Those pairs teach <strong>format faithfully but leak for reasoning</strong>. When the goal is explicitly a format fix, that is an acceptable trade, but write it down, so nobody later reads your accuracy numbers as reasoning gains.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 04</p>
+  <h2>Gate, balance, split, scrub</h2>
+  <div class="col">
+    <p>Raw pairs are not a dataset. Five transforms stand in between, and skipping any one produces a model that scores well and behaves badly.</p>
+    <p><strong>Validate against the real schema.</strong> Not "does it parse", does it satisfy the contract, with required fields and enumerated values in range? Import the real validators from the consuming application. This run rejected 12.6% of pairs; every one would have taught the model something the parser refuses. Strip code fences before validating, or you will reject everything and conclude your gold is garbage.</p>
+    <p><strong>Deduplicate.</strong> Replays and retries produce near-identical pairs that inflate size, bias training, and leak across the split.</p>
+    <p><strong>Balance.</strong> Cap a dominant class at a defined share, but don't over-correct: with only two classes, a 30% cap discards most of your data. This run capped at 60% and landed at 54/46.</p>
+    <p><strong>Split by episode.</strong> The one that is most often botched, and the one that silently inflates every number you report, see the trap below.</p>
+    <p><strong>Scrub.</strong> Hostnames, addresses, tokens and identifiers become effectively unremovable once trained in. Scrub on the way into the dataset, not later.</p>
+  </div>
+
+  <div class="trap">
+    <p class="lbl">Trap · row-level splitting is leakage</p>
+    <p>Rows drawn from the same episode share context. Split rows randomly and near-identical content lands on both sides of the wall, your validation set measures memorisation and reports it as generalisation.</p>
+    <p><strong>Rule:</strong> split at the level of the underlying episode, incident, conversation, document, user, and hold out whole episodes. This is the most commonly botched step in the process, and it silently inflates every number you report.</p>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Stage</th><th>Count</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Raw pairs harvested</td><td class="num">1,283</td><td>two step types were enough</td></tr>
+        <tr><td>Failed schema gate</td><td class="num poor">−162</td><td>12.6%, invalid enum or missing field</td></tr>
+        <tr><td>Duplicates</td><td class="num poor">−4</td><td>replay artefacts</td></tr>
+        <tr><td>Kept</td><td class="num">1,117</td><td>across 513 episodes</td></tr>
+        <tr><td>Train / validate</td><td class="num good">1,001 / 116</td><td>51 episodes held out whole</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Set the volume gate <em>before</em> harvesting so you know when to stop. A few hundred clean examples move conformance; a thousand is comfortable. This run targeted 800 and finished at 1,117 using two of the six recorded step types, the rest were dropped deliberately once the target was met.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 05</p>
+  <h2>The training run</h2>
+  <div class="col">
+    <p>The part everyone imagines is the project. It is the easiest phase and, by now, nearly mechanical.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Setting</th><th>Value</th><th>Reasoning</th></tr></thead>
+      <tbody>
+        <tr><td>Method</td><td>QLoRA (4-bit base)</td><td>Small adapter over a quantised base, fits consumer memory</td></tr>
+        <tr><td>Rank</td><td class="num">32</td><td>Ample for format learning; 8–16 also works</td></tr>
+        <tr><td>Layers adapted</td><td class="num">16</td><td>Full depth exhausted memory for no gain on a dense model</td></tr>
+        <tr><td>Loss</td><td>Answer only</td><td>Mask the prompt, or capacity goes to memorising inputs</td></tr>
+        <tr><td>Steps</td><td class="num">2,000</td><td>~2 epochs over 1,001 examples</td></tr>
+        <tr><td>Batch / context</td><td class="num">1 / 4,096</td><td>Set by the memory ceiling, not preference</td></tr>
+        <tr><td>Peak memory</td><td class="num">24.4 GB</td><td>On a 36 GB laptop</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>Loss fell 1.15 → 0.31, best slightly before the end with a small uptick after, ordinary over-fitting onset, and the reason to checkpoint periodically instead of trusting the last step. <strong>For conformance work, loss is only a proxy.</strong> The number that matters is the share of held-out outputs that actually validate; generate and check on a schedule.</p>
+  </div>
+
+  <div class="trap">
+    <p class="lbl">Trap · the one that nearly stopped everything</p>
+    <p>Training reported a loss of <code>nan</code> immediately. The chain: prompts were evidence-heavy, some over 5,700 tokens. The trainer truncates <em>from the end</em>. The end is where the answer lives, so the answer was cut off. Prompt-masking then masked everything remaining. A sequence with zero unmasked tokens divides by zero, loss becomes <code>nan</code>, nothing trains.</p>
+    <p><strong>Fix:</strong> trim the <em>middle of the input</em> during dataset construction so the system prompt and the answer always survive the window. <strong>Rule:</strong> if you mask prompts, guarantee every example retains answer tokens after truncation, and check that the first validation loss is a real number before committing to a full run.</p>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 900 200" role="img" aria-label="Before the fix a long prompt pushes the answer outside the context window so masking leaves nothing trainable; after trimming the middle of the input the answer stays inside the window.">
+      <g color="var(--ink-3)">
+        <text class="lab" x="20" y="24" style="font-weight:600">Before, the answer falls outside the window</text>
+        <rect x="20" y="34" width="470" height="28" rx="3" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+        <text class="lab-s" x="255" y="53" text-anchor="middle">system + very long input</text>
+        <rect x="490" y="34" width="120" height="28" rx="3" fill="var(--bad-soft)" stroke="var(--bad)" stroke-width="1.4"/>
+        <text class="lab-s" x="550" y="53" text-anchor="middle" fill="var(--bad)">answer</text>
+        <line x1="520" y1="24" x2="520" y2="76" stroke="var(--bad)" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <text class="lab-s" x="528" y="90" fill="var(--bad)">context limit, everything to the right is discarded</text>
+        <text class="lab-s" x="20" y="90">trainable tokens after masking: 0 → loss = nan</text>
+
+        <text class="lab" x="20" y="134" style="font-weight:600">After, input trimmed in the middle</text>
+        <rect x="20" y="144" width="196" height="28" rx="3" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+        <text class="lab-s" x="118" y="163" text-anchor="middle">system + input head</text>
+        <rect x="216" y="144" width="66" height="28" rx="3" fill="var(--warn-soft)" stroke="var(--warn)" stroke-width="1.2"/>
+        <text class="lab-s" x="249" y="163" text-anchor="middle" fill="var(--warn)">cut</text>
+        <rect x="282" y="144" width="138" height="28" rx="3" fill="var(--sunk)" stroke="var(--rule-strong)"/>
+        <text class="lab-s" x="351" y="163" text-anchor="middle">input tail</text>
+        <rect x="420" y="144" width="100" height="28" rx="3" fill="var(--good-soft)" stroke="var(--good)" stroke-width="1.4"/>
+        <text class="lab-s" x="470" y="163" text-anchor="middle" fill="var(--good)">answer</text>
+        <line x1="520" y1="134" x2="520" y2="186" stroke="var(--good)" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <text class="lab-s" x="528" y="166" fill="var(--good)">answer inside the limit, loss = 1.15</text>
+      </g>
+    </svg>
+    <figcaption>Same context limit, same masking setting. The only change is where truncation lands.</figcaption>
+  </figure>
+
+  <div class="trap">
+    <p class="lbl">Trap · memory is a wall, not a slope</p>
+    <p>Adapting every layer at a larger batch exhausted memory outright, a hard crash, not a slowdown. Settings copied from a tutorial written for different hardware fail immediately. Start conservative, confirm the run is healthy, then scale up if you have headroom.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 06</p>
+  <h2>Evaluating without fooling yourself</h2>
+  <div class="col">
+    <p>An absolute score means little alone. <strong>Always measure the base model on the identical held-out set with the identical harness.</strong> Without that column you cannot separate what you achieved from what the model could already do.</p>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Model</th><th>Step type A</th><th>Step type B</th><th>Overall</th></tr></thead>
+      <tbody>
+        <tr><td>Model 1 (smaller), base</td><td class="num">2%</td><td class="num">30%</td><td class="num poor">18%</td></tr>
+        <tr><td><strong>Model 1 (smaller), fine-tuned</strong></td><td class="num">98%</td><td class="num">95%</td><td class="num good">97%</td></tr>
+        <tr><td>Model 2 (larger), fine-tuned</td><td class="num">98%</td><td class="num">95%</td><td class="num good">97%</td></tr>
+        <tr><td>Model 2 (larger), base</td><td class="num">0%</td><td class="num">0%</td><td class="num poor">0%*</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>One row carries a caveat that matters more than the headline. <strong>*</strong> That 0% is not proof of incapability: the model defaults to a reasoning mode and returned no parseable content within the budget. The honest reading is "unusable out of the box for this task", and reporting a clean zero without the note would mislead.</p>
+    <p>Both fine-tunes landing on <em>identical</em> figures is itself the most reusable finding: the dataset, not the base model, was doing the work.</p>
+  </div>
+
+  <div class="fork">
+    <p class="lbl">Decision · picking a winner when quality ties</p>
+    <h4>Decide on the secondary axes, and benchmark before committing</h4>
+    <p>Equal accuracy meant the choice fell to size (2.1 GB vs 4.9 GB) and CPU generation speed (52 vs 36 tokens/sec). The smaller model won on every remaining axis. Measure throughput against the class's floor, below roughly 5 tok/s an interactive agent stops being tolerable, <em>before</em> you commit.</p>
+  </div>
+
+  <div class="col">
+    <h3>Test what you did not train</h3>
+    <p>A specialised model can lose general ability. Summarisation, deliberately not trained, was measured before and after: fabricated-detail rate rose from 36% to 48%. The fine-tune had mildly degraded a capability it never touched.</p>
+    <p>That finding is worth as much as the headline: <strong>one dataset buys exactly one capability.</strong> A second capability needs its own data and its own gate, and you may quietly lose ground you already had.</p>
+    <p>Two honesty rules for any number you publish. Name your proxy, this fabrication metric flagged any figure absent from the source, which over-counts reformatting, so only the <em>relative</em> movement is trustworthy. And hold every model to identical conditions; this run nearly recorded a 2-of-25 failure that was purely a thinking-mode artefact of the harness itself.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Step 07</p>
+  <h2>Shipping it</h2>
+  <div class="col">
+    <ul>
+      <li><strong>Merge, convert, quantise.</strong> Fold the adapter into the base and quantise, 4-bit on a 3B model lands near 2 GB with negligible loss for conformance tasks.</li>
+      <li><strong>Verify the chat template survived conversion.</strong> A mismatch between training and serving formats degrades quality silently, no error, just worse output.</li>
+      <li><strong>Record the serving flags.</strong> Undocumented runtime flags are a multi-hour mystery for whoever deploys next.</li>
+      <li><strong>Name the model inside the file,</strong> not just the filename, the internal name is what serving APIs report and what your router matches on.</li>
+      <li><strong>Deploy alongside, not instead.</strong> Route by model identifier so comparison and rollback are config changes, not redeployments.</li>
+      <li><strong>Keep the eval in CI.</strong> The class's Lab 5 harness is exactly the thing that tells you when a model or prompt change regressed you.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Reference</p>
+  <h2>Every trap in one table</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Symptom</th><th>Actual cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Empty model output</td><td>Reasoning mode consumed the budget</td><td>Disable thinking; confirm the server honours it</td></tr>
+        <tr><td>Loss is <code>nan</code> at step one</td><td>Truncation removed the answer; masking left nothing</td><td>Trim the input's middle so the answer survives</td></tr>
+        <tr><td>Out of memory, hard crash</td><td>Too many adapted layers, batch too large</td><td>Fewer layers, batch of one, then scale</td></tr>
+        <tr><td>Adapter trains but barely learns</td><td>Attention-only targets on a hybrid architecture</td><td>Check architecture; target all linear layers</td></tr>
+        <tr><td>Every gold answer fails validation</td><td>Answers wrapped in code fences</td><td>Strip fences before validating</td></tr>
+        <tr><td>Suspiciously excellent scores</td><td>Row-level split leaked shared context</td><td>Split by episode, hold out whole episodes</td></tr>
+        <tr><td>Model emits fields the parser rejects</td><td>Trained on stored records, not raw emissions</td><td>Transform stored shape back to emitted shape</td></tr>
+        <tr><td>A step type yields no pairs</td><td>Its inputs were never stored, only outputs</td><td>Reconcile expected vs produced, per step type</td></tr>
+        <tr><td>Long job dies repeatedly</td><td>No resumability; restarts redo everything</td><td>Make it resumable and append-only from the start</td></tr>
+        <tr><td>Confusing cache errors</td><td>Interrupted download left a partial snapshot</td><td>Re-fetch to complete before converting</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>One operational lesson that isn't about models at all: the harvest in this project was killed by its environment roughly every hundred records, and finished anyway across repeated passes because it was <strong>resumable and append-only</strong>. Retrofitting that cost minutes; not having it would have cost the project. Any job over a few minutes should be resumable before you first run it.</p>
+  </div>
+</section>
+
+<section>
+  <p class="pnum">Reference</p>
+  <h2>The checklist</h2>
+  <div class="check">
+    <div>Answer the field card's five questions first. Fine-tuning is question six.</div>
+    <div>Confirm the architecture is decomposed and each step verified before training anything.</div>
+    <div>Exhaust constrained decoding, grammars, few-shot, repair passes and routing.</div>
+    <div>Classify the failure: format, domain, or reasoning. Only the first two are trainable.</div>
+    <div>Run the peer-model test, proof the capability exists at that size.</div>
+    <div>Verify the current model release and read its architecture section.</div>
+    <div>Smoke-test the entire chain on throwaway data before building a dataset.</div>
+    <div>Locate gold; determine whether it is raw emission or processed artefact.</div>
+    <div>Find the parser, whatever enters it is your training target.</div>
+    <div>Prefer teacher-forced replay when a runnable system exists.</div>
+    <div>Validate against real schemas; strip code fences first.</div>
+    <div>Deduplicate, balance classes, split by episode, never by row.</div>
+    <div>Scrub sensitive data before it becomes weights.</div>
+    <div>Guarantee the answer survives truncation if you mask prompts.</div>
+    <div>Confirm the first validation loss is a real number.</div>
+    <div>Measure the base model on the identical held-out set.</div>
+    <div>Run a regression check on capabilities you did not train.</div>
+    <div>Benchmark throughput against your latency floor before committing.</div>
+    <div>Document serving flags, model naming, and every trade-off accepted.</div>
+  </div>
+
+  <div class="closing col">
+    <p class="kicker">The short version</p>
+    <p class="pull">Fine-tuning was the easy night's work. Finding trustworthy gold, recovering the prompts that went with it, and refusing to fool ourselves at evaluation, that was the project.</p>
+    <p>If you take two habits from this page, take the failure classification at the top and the base-model column in the evaluation table. The first stops you training something that needs a bigger model or a better decomposition. The second stops you claiming credit the base model already deserved.</p>
+    <p style="color:var(--ink-3); font-size:14px">Companion to the SLM Field Card and the two-hour class. Figures and numbers come from one real production run, anonymised.</p>
+  </div>
+</section>
+
+</div>

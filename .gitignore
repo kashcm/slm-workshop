@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Notebook
+.ipynb_checkpoints/
+
+# Built PDFs are exported from the decks and go stale on every rebuild
+01-deck/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
