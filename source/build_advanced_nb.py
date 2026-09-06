@@ -538,6 +538,10 @@ def one(i):
     except Exception:
         return time.time()-t0, False
 
+# Warm the model first. Without this the single stream row is a cold load and
+# latency appears to fall as you add streams, which is nonsense.
+ask(SMALL, "warm up", num_predict=8, think=False)
+
 print(f"{'streams':>8} {'wall s':>8} {'mean latency':>14} {'ok':>5}")
 for k in [1, 2, 4, 8]:
     t0 = time.time()
@@ -561,8 +565,12 @@ Then break the cache with a changing value at the top and watch the saving vanis
 """)
 
 code('''
+# The prefix has to be big enough that processing it is measurable. On a fast
+# GPU a few hundred tokens are processed in noise, and the saving disappears.
 STABLE = ("You are a support classifier. Categories: billing, access, bug, outage.\\n"
-          "Conventions:\\n" + "\\n".join(f"  rule {i}: always be concise and factual." for i in range(40)))
+          "Conventions:\\n" + "\\n".join(
+              f"  rule {i}: be concise, be factual, cite the account, never guess."
+              for i in range(300)))
 
 def timed(prefix, tail):
     _, m = ask(SMALL, prefix + "\\n\\nMessage: " + tail, num_predict=16, think=False)
@@ -571,15 +579,19 @@ def timed(prefix, tail):
 t1 = timed(STABLE, "card charged twice")
 t2 = timed(STABLE, "cannot log in")
 print("stable prefix, prompt processing")
-print(f"  first call : {t1[0]:>5} tokens in {t1[1]:.2f}s")
-print(f"  second call: {t2[0]:>5} tokens in {t2[1]:.2f}s")
+print(f"  first call : {t1[0]:>5} tokens in {t1[1]:.3f}s")
+print(f"  second call: {t2[0]:>5} tokens in {t2[1]:.3f}s")
+if t2[1] > 0:
+    print(f"  speedup    : {t1[1]/t2[1]:.1f}x")
 
 import datetime
 v1 = timed("Generated at " + datetime.datetime.now().isoformat() + "\\n" + STABLE, "card charged twice")
 v2 = timed("Generated at " + datetime.datetime.now().isoformat() + "\\n" + STABLE, "cannot log in")
 print("\\nprefix broken by a timestamp at the top")
-print(f"  first call : {v1[0]:>5} tokens in {v1[1]:.2f}s")
-print(f"  second call: {v2[0]:>5} tokens in {v2[1]:.2f}s")
+print(f"  first call : {v1[0]:>5} tokens in {v1[1]:.3f}s")
+print(f"  second call: {v2[0]:>5} tokens in {v2[1]:.3f}s")
+if v2[1] > 0:
+    print(f"  speedup    : {v1[1]/v2[1]:.1f}x   <- should be about 1x, no reuse")
 print("\\nOne changing value at the top of a prompt discards the entire cached prefix.")
 print("This is the single most common self inflicted latency problem in production.")
 ''')
