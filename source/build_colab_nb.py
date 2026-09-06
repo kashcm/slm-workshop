@@ -44,46 +44,53 @@ not your laptop's. The shapes and the lessons transfer. The values do not, and
 that distinction is itself one of the things this class is about.
 """
 
-SETUP_INSTALL = '''
+SETUP_INSTALL = """
 # Install and start Ollama inside this VM. Takes about a minute.
-import shutil, subprocess, time, requests
+# Output is shown as it goes, so a failed download is visible rather than hidden.
+import os, shutil, subprocess, time, requests
 
-if shutil.which("ollama") is None:
-    print("installing ollama ...", flush=True)
-    r = subprocess.run("curl -fsSL https://ollama.com/install.sh | sh",
-                       shell=True, capture_output=True, text=True)
-    if shutil.which("ollama") is None:
-        raise RuntimeError(
-            "ollama install failed. Last output: "
-            + (r.stderr or r.stdout)[-400:]
-            + " If you are not on Linux, install Ollama yourself and re-run this cell."
-        )
-else:
-    print("ollama already present")
+def find_ollama():
+    for path in ("/usr/local/bin/ollama", "/usr/bin/ollama", "/bin/ollama"):
+        if os.path.exists(path):
+            return path
+    return shutil.which("ollama")
+
+if find_ollama() is None:
+    print("installing ollama, this takes a minute ...", flush=True)
+    subprocess.run("curl -fsSL https://ollama.com/install.sh | sh", shell=True)
+
+OLLAMA_BIN = find_ollama()
+print("ollama binary:", OLLAMA_BIN)
+if OLLAMA_BIN is None:
+    raise RuntimeError(
+        "The installer did not leave a binary in /usr/local/bin or /usr/bin. "
+        "Re-run this cell, Colab downloads fail intermittently."
+    )
 
 # Start the server in the background. Colab has no service manager.
-subprocess.Popen(["ollama", "serve"],
+subprocess.Popen([OLLAMA_BIN, "serve"],
                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-for _ in range(60):
+for _ in range(90):
     try:
-        v = requests.get("http://localhost:11434/api/version", timeout=2).json()
-        print("ollama running, version", v.get("version"))
+        version = requests.get("http://localhost:11434/api/version", timeout=2).json()
+        print("ollama running, version", version.get("version"))
         break
     except Exception:
         time.sleep(1)
 else:
-    raise RuntimeError("ollama did not start, run this cell again")
-'''
+    raise RuntimeError("Server did not come up. Re-run this cell.")
+"""
 
 SETUP_PULL = '''
 # Pull the two models and fetch the recorded measurements. Two to three minutes.
 import subprocess, requests, pathlib
+# OLLAMA_BIN comes from the cell above.
 
 MODELS = ["lfm2.5-thinking:1.2b", "granite4.2:3b"]   # about 3 GB in total
 for m in MODELS:
     print(f"pulling {m} ...", flush=True)
-    r = subprocess.run(["ollama", "pull", m], capture_output=True, text=True)
+    r = subprocess.run([OLLAMA_BIN, "pull", m], capture_output=True, text=True)
     if r.returncode != 0:
         print("  failed:", r.stderr.strip().splitlines()[-1:] or r.stdout[-200:])
 
