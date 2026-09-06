@@ -581,9 +581,9 @@ section('02', 'SLMs in agentic systems',
   const s = slide(false);
   title(s, 'The counterargument, and it is a good one', false,
     '"The Illusion of Diminishing Returns" (arXiv 2509.09677), model size buys horizon');
-  stat(s, M, 2.05, 3.6, '>1,000', 'steps at 50% success\nGPT-5', INK, false, 44);
-  stat(s, M + 3.9, 2.05, 3.6, '~400', 'steps at 50% success\nClaude-4-Sonnet', INK, false, 44);
-  stat(s, M + 7.8, 2.05, 4.1, '<15', 'turns before Qwen3-32B\nfalls below 50%', SIG, false, 44);
+  stat(s, M, 2.05, 3.6, '>1,000', 'steps at 50% success\na leading frontier model', INK, false, 44);
+  stat(s, M + 3.9, 2.05, 3.6, '~400', 'steps at 50% success\na frontier mid tier model', INK, false, 44);
+  stat(s, M + 7.8, 2.05, 4.1, '<15', 'turns before a 32B open model\nfalls below 50%', SIG, false, 44);
   card(s, M, 4.05, CW, 2.15, false, 'FDEEE8');
   s.addText([
     { text: 'Every model except the 4B ones scored 100% on step one.', options: { bold: true, breakLine: true } },
@@ -668,7 +668,7 @@ section('02', 'SLMs in agentic systems',
     ['02', 'Heterogeneous agents',
      'SLM for the mechanical, high-frequency work: classification, extraction, format conversion, tool-argument construction, summarising bounded inputs. Frontier model for planning, novel reasoning and error recovery.'],
     ['03', 'Frontier model as offline teacher',
-     'Zed’s Zeta2 edit-prediction model is an 8B open model distilled with Claude Sonnet as teacher. The big model manufactures training data offline and never appears in the hot path. +30% acceptance rate. The most underused pattern here.'],
+     'Zed’s Zeta2 edit-prediction model is an 8B open model distilled with a frontier model as teacher. The big model manufactures training data offline and never appears in the hot path. +30% acceptance rate. The most underused pattern here.'],
     ['04', 'Guardrails as SLMs',
      'Across 14 open guard models from 110M to 20B, the correlation between parameter count and detection was r = 0.21, p = 0.48, indistinguishable from zero. A 4B model had 3.4x the recall of a 20B. Larger is not safer.'],
   ];
@@ -793,9 +793,9 @@ section('03', 'The B2B case',
     'One RTX 4090 rig at ~$504/month, agent traffic at 80% input / 20% output');
   tbl(s, [
     [hdr('If you are displacing'), hdr('Blended $/1M'), hdr('Break-even'), hdr('Per day')],
-    ['Claude Opus 5  ($5 / $25)', '$9.00', { text: '~57M tok/mo', options: { fontFace: MF, bold: true, color: GOOD } }, '1.9M'],
-    ['Claude Sonnet 5  ($2 / $10)', '$3.60', { text: '~146M tok/mo', options: { fontFace: MF, bold: true, color: GOOD } }, '4.9M'],
-    ['Claude Haiku 4.5  ($1 / $5)', '$1.80', { text: '~305M tok/mo', options: { fontFace: MF, bold: true, color: WARN } }, '10M'],
+    ['a frontier premium model  ($5 / $25)', '$9.00', { text: '~57M tok/mo', options: { fontFace: MF, bold: true, color: GOOD } }, '1.9M'],
+    ['a frontier mid tier model  ($2 / $10)', '$3.60', { text: '~146M tok/mo', options: { fontFace: MF, bold: true, color: GOOD } }, '4.9M'],
+    ['a frontier small model  ($1 / $5)', '$1.80', { text: '~305M tok/mo', options: { fontFace: MF, bold: true, color: WARN } }, '10M'],
     ['a cheap hosted small model', '$0.40', { text: '~2,000M tok/mo', options: { fontFace: MF, bold: true, color: SIG } }, '67M'],
   ], M, 2.1, CW, { colW: [4.4, 2.3, 3.0, 2.23], rowH: 0.42, fontSize: 13.5 });
   s.addText('Then the honest total cost of ownership', { x: M, y: 4.5, w: CW, h: 0.4,

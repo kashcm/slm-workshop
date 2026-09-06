@@ -635,7 +635,7 @@ Three conclusions:
 
 Independent evidence for the same point: models can all hit **100% on step one**
 and still differ in achievable horizon by orders of magnitude. GPT-5 >1000
-steps, Claude-4-Sonnet ~400, Qwen3-32B below 50% within 15 turns
+steps, a frontier mid tier model ~400, a 32B open model below 50% within 15 turns
 ([arXiv 2509.09677](https://arxiv.org/abs/2509.09677)). Single-step benchmarks
 cannot predict agent performance.
 """)
