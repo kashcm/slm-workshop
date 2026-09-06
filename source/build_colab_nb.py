@@ -22,59 +22,55 @@ RAW = ("https://raw.githubusercontent.com/kashcm/slm-workshop/main/"
        "03-lab/moe_measurements.json")
 
 SETUP_MD = """
-# Small Language Models: Advanced Lab (Colab)
+# Small Language Models: Advanced Lab
 
-Everything runs inside this Colab virtual machine. There is nothing to install on
-your own computer and nothing to download to it.
+Three labs. Everything runs in this Colab machine, nothing on your laptop.
 
-Run the two setup cells below **first**. They take two to four minutes, mostly
-model download. Start them now and read ahead while they finish.
-
-Three labs:
-
-| Lab | What you build | Needs a model |
+| Lab | You build | Needs a model |
 |---|---|---|
-| 6 | An evaluation harness with slices, a validated judge and error bars | yes |
-| 7 | A mixture of experts analysis | no, it reads recorded measurements |
-| 8 | How memory scales with context and concurrency | yes |
+| 6 | An eval harness that can actually fail | yes |
+| 7 | A mixture of experts analysis | no |
+| 8 | A memory budget | yes |
 
-**One honest note about this environment.** Colab usually gives you CPU only, so
-we use two small models. The numbers you see are this virtual machine's numbers,
-not your laptop's. The shapes and the lessons transfer. The values do not, and
-that distinction is itself one of the things this class is about.
+**Run the setup cells below now.** They take a few minutes. Keep reading while
+they work.
+
+Your numbers will not match the instructor's. You are on smaller models in a
+shared VM. The shapes will match, the values will not.
 """
 
 SETUP_INSTALL = """
-# Install and start Ollama inside this VM. Takes about a minute.
-# Output is shown as it goes, so a failed download is visible rather than hidden.
+# Install and start Ollama inside this VM.
+#
+# Two things this works around, both discovered the hard way:
+#   1. Recent Ollama releases ship as .tar.zst and Colab has no zstd, so the
+#      official install script fails in about a second with no visible error.
+#   2. subprocess output goes to the kernel log rather than the cell, so every
+#      command below prints its own output where you can actually see it.
 import os, shutil, subprocess, time, requests
 
-def find_ollama():
-    for path in ("/usr/local/bin/ollama", "/usr/bin/ollama", "/bin/ollama"):
-        if os.path.exists(path):
-            return path
-    return shutil.which("ollama")
+OLLAMA_BIN = shutil.which("ollama") or "/usr/local/bin/ollama"
+URL = ("https://github.com/ollama/ollama/releases/download/"
+       "v0.33.3/ollama-linux-amd64.tar.zst")
 
-if find_ollama() is None:
-    print("installing ollama, this takes a minute ...", flush=True)
-    subprocess.run("curl -fsSL https://ollama.com/install.sh | sh", shell=True)
+if not os.path.exists(OLLAMA_BIN):
+    if not os.path.exists("/tmp/ollama.tar.zst"):
+        print("downloading ollama, about 1.4 GB ...", flush=True)
+        os.system(f"curl -fL --retry 3 -o /tmp/ollama.tar.zst {URL}")
+    print(os.popen("apt-get -qq install -y zstd 2>&1 | tail -2").read())
+    print(os.popen("tar --use-compress-program=unzstd -xf /tmp/ollama.tar.zst "
+                   "-C /usr/local 2>&1 | tail -3").read())
 
-OLLAMA_BIN = find_ollama()
-print("ollama binary:", OLLAMA_BIN)
-if OLLAMA_BIN is None:
-    raise RuntimeError(
-        "The installer did not leave a binary in /usr/local/bin or /usr/bin. "
-        "Re-run this cell, Colab downloads fail intermittently."
-    )
+if not os.path.exists(OLLAMA_BIN):
+    raise RuntimeError("No binary at " + OLLAMA_BIN + ". Re-run this cell.")
 
-# Start the server in the background. Colab has no service manager.
 subprocess.Popen([OLLAMA_BIN, "serve"],
                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 for _ in range(90):
     try:
-        version = requests.get("http://localhost:11434/api/version", timeout=2).json()
-        print("ollama running, version", version.get("version"))
+        print("ollama running, version",
+              requests.get("http://localhost:11434/api/version", timeout=2).json()["version"])
         break
     except Exception:
         time.sleep(1)
@@ -87,7 +83,10 @@ SETUP_PULL = '''
 import subprocess, requests, pathlib
 # OLLAMA_BIN comes from the cell above.
 
-MODELS = ["lfm2.5-thinking:1.2b", "granite4.2:3b"]   # about 3 GB in total
+# Two small models, about 3 GB, chosen so this works on a free CPU only VM.
+# On Colab Pro with a GPU you can use ["granite4.2:3b", "granite4.2:8b"] instead
+# and set SMALL/BIG/JUDGE to match, which lines your numbers up with the deck.
+MODELS = ["lfm2.5-thinking:1.2b", "granite4.2:3b"]
 for m in MODELS:
     print(f"pulling {m} ...", flush=True)
     r = subprocess.run([OLLAMA_BIN, "pull", m], capture_output=True, text=True)
@@ -121,15 +120,19 @@ print("You are ready." if txt else "Empty reply, re-run the cell.")
 '''
 
 LAB8_MD = """
-# Lab 8 - How memory actually scales (15 min)
+# Lab 8 - How memory scales (15 min)
 
-On your own hardware this lab finds the ceiling of your machine. Here it measures
-this Colab virtual machine instead, so treat the values as illustrative and the
-**shapes** as the lesson: cache grows linearly with context, concurrency
-multiplies it, and a stable prompt prefix is nearly free to reuse.
+On your own servers this lab finds your ceiling. Here it measures this Colab VM,
+so read the shapes rather than the values:
 
-Everything you learn here transfers to your own servers. The numbers do not.
+- cache grows with context
+- concurrency multiplies it
+- a stable prompt prefix is nearly free to reuse
 """
+
+
+
+REWRITES = {'# Lab 6 - An evaluation harness that can fail (20 min)': '# Lab 6 - An eval harness that can fail (20 min)\n\nYou are not scoring a model here. You are building a harness whose numbers you\ncould defend when someone senior disagrees.\n\nFour things separate a real harness from a comfort blanket:\n\n1. the set is **composed by slice**, not sampled\n2. **mechanical checks first**, a judge only where nothing else works\n3. the judge is **checked against human labels** before you trust it\n4. every number carries an **interval**', '### 6a. Compose the set by slice': '### 6a. Compose the set by slice\n\nBelow is traffic with gold labels. Half ordinary, then hard cases, adversarial\ninput, boundaries, and cases where the right answer is to refuse.\n\nA uniform sample of production traffic contains almost none of the last three.\nThat is why uniform samples always pass.', '### 6b. Mechanical scoring first': '### 6b. Mechanical scoring first\n\nSchema and exact match cost nothing and never drift. Score **per slice**, because\nthe aggregate hides the failures you care about.', '### 6c. Error bars, before you conclude anything': '### 6c. Error bars, before you conclude anything\n\nIf two intervals overlap, you have not measured a difference. Run both models and\ncompare.', '### 6d. Paired comparison is far more sensitive': '### 6d. Paired comparison is far more sensitive\n\nComparing two aggregates throws away the pairing. Compare **per case** instead and\ncount only where the models disagree.', '### 6e. Validate the judge before you trust it': '### 6e. Validate the judge before you trust it\n\nSome things cannot be checked mechanically. A model can judge those, but only\nafter you measure its agreement with your own labels.\n\nBelow 80 percent agreement, it is not a gate. The `HUMAN` labels here stand in for\nthe fifty you would label yourself.', '### 6f. Turn it into a gate': '### 6f. Turn it into a gate\n\nA harness that prints numbers is a report. A harness that returns pass or fail is\na gate, and only a gate protects you on a Friday.', '### 7a. Separate what total size governs from what active size governs': '### 7a. What total size governs, and what active size governs\n\nLoad time and memory follow **total** parameters. Generation speed follows\n**active** parameters.', '### 7b. The metric that decides hardware': '### 7b. The metric that decides hardware\n\nThroughput per gigabyte. Your constraint is almost always memory, not compute.', '### 7c. Decide under a budget': '### 7c. Decide under a budget\n\nGiven a memory budget, a latency floor and a quality floor, which model would you\ndeploy, and how many copies?', '### 8a. Watch the KV cache grow': '### 8a. Watch the KV cache grow\n\nLoad the same model at different context settings. The weights never change, so\nevery extra gigabyte is cache.', '### 8b. Find the concurrency ceiling': '### 8b. Find the concurrency ceiling\n\nFire parallel requests and watch latency degrade. The knee in this curve is your\nreal capacity, not the single stream number.', '### 8c. Get the prefix back': '### 8c. Get the prefix back\n\nPut the stable part of a prompt first and send it twice. Then break it with a\nchanging value at the top and watch the saving vanish.', '### 8d. Write the sizing recommendation': '### 8d. Write the sizing recommendation\n\nPut the three measurements together into something you would send to whoever owns\nthe hardware budget.'}
 
 
 def main():
@@ -164,6 +167,13 @@ def main():
         if c["cell_type"] == "markdown" and src.lstrip().startswith("# Lab 8"):
             c["source"] = LAB8_MD.strip()
             n_lab8 += 1
+            continue
+        # 5. tighter, student facing prose for the Colab flavour
+        if c["cell_type"] == "markdown":
+            for head, replacement in REWRITES.items():
+                if src.lstrip().startswith(head):
+                    c["source"] = replacement.strip()
+                    break
 
     nb["metadata"]["colab"] = {"provenance": [], "toc_visible": True}
     nb["metadata"]["kernelspec"] = {"display_name": "Python 3", "name": "python3"}
