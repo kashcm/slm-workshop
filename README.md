@@ -38,6 +38,10 @@ number themselves.
                                checklist, failure modes, and the measured baseline
                                you should expect from a clean run
   PRE-CLASS-EMAIL.md           copy and paste setup instructions for attendees
+  ADVANCED_RUN_SHEET.md        run sheet for the advanced track: morning checklist,
+                               timing, what each lab should produce, failure modes
+  ADVANCED_PRE_CLASS.md        setup instructions for the advanced track, including
+                               distributing models on a USB stick
 
 03-lab/
   slm_hands_on_lab.ipynb       self contained notebook, six labs, needs only
@@ -47,6 +51,9 @@ number themselves.
                                and a memory budget measured on your own machine
   moe_measurements.json        recorded measurements the mixture of experts lab
                                analyses, so nobody has to pull a large model
+  check_setup.py               attendees run this before the workshop. Verifies
+                               Python, requests, Ollama, models and a real
+                               generation, and prints exactly what to fix
 
 04-handout/
   slm-field-card.html          one page decision reference for attendees to keep
@@ -95,7 +102,17 @@ ollama pull lfm2.5-thinking:1.2b
 curl http://localhost:11434/api/version
 ```
 
+Verify everything at once with:
+
+```bash
+python3 03-lab/check_setup.py
+```
+
 Then open `03-lab/slm_hands_on_lab.ipynb` and run Lab 0.
+
+The advanced track needs only `granite4.2:3b` and `granite4.2:8b`, about 7.5 GB,
+because its mixture of experts lab reads recorded measurements instead of pulling
+a large model.
 
 ## Agenda, two hour form
 
