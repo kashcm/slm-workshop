@@ -42,6 +42,9 @@ number themselves.
                                timing, what each lab should produce, failure modes
   ADVANCED_PRE_CLASS.md        setup instructions for the advanced track, including
                                distributing models on a USB stick
+  ADVANCED_TALK_TRACK.md       slide by slide talk track, with the opening and the
+                               close written out, plus the questions an experienced
+                               room actually asks
 
 03-lab/
   slm_hands_on_lab.ipynb       self contained notebook, six labs, needs only
@@ -69,6 +72,8 @@ source/
   build_nb.py                  generator for the main notebook
   build_advanced_nb.py         generator for the advanced notebook
   measure_moe.py               records moe_measurements.json on your own hardware
+  make_usb.py                  builds a minimal model payload for USB distribution,
+                               about 7.5 GB rather than the whole models directory
 ```
 
 Content lives in the generators, so edit those and rebuild rather than editing the
