@@ -1,0 +1,73 @@
+{
+  "recorded_on": "2026-09-06",
+  "host": "Darwin arm64",
+  "runtime": "ollama",
+  "note": "All values measured, none estimated. Cold load time measured after an explicit unload. Generation and prompt rates are medians over three prompts with the model resident.",
+  "prompts": [
+    "Summarise in one sentence why memory bandwidth limits token generation.",
+    "List three reasons a service might return HTTP 503.",
+    "Explain the difference between a cache hit and a cache miss in one sentence."
+  ],
+  "models": [
+    {
+      "name": "lfm2.5-thinking:1.2b",
+      "kind": "dense",
+      "total_params": "1.2B",
+      "active_params": "1.2B",
+      "disk_gb": 0.73,
+      "resident_gb": 0.96,
+      "load_s": 0.53,
+      "gen_tok_s": 362.0,
+      "prompt_tok_s": 1434.1,
+      "quality": 0.2,
+      "quality_mode": "thinking disabled",
+      "quality_metric": "exact match on 10 structured classification cases",
+      "samples": 3
+    },
+    {
+      "name": "granite4.2:3b",
+      "kind": "dense",
+      "total_params": "3B",
+      "active_params": "3B",
+      "disk_gb": 2.24,
+      "resident_gb": 3.05,
+      "load_s": 1.04,
+      "gen_tok_s": 135.1,
+      "prompt_tok_s": 827.0,
+      "quality": 1.0,
+      "quality_mode": "thinking disabled",
+      "quality_metric": "exact match on 10 structured classification cases",
+      "samples": 3
+    },
+    {
+      "name": "granite4.2:8b",
+      "kind": "dense",
+      "total_params": "8B",
+      "active_params": "8B",
+      "disk_gb": 5.35,
+      "resident_gb": 6.89,
+      "load_s": 2.14,
+      "gen_tok_s": 67.6,
+      "prompt_tok_s": 449.5,
+      "quality": 1.0,
+      "quality_mode": "thinking disabled",
+      "quality_metric": "exact match on 10 structured classification cases",
+      "samples": 3
+    },
+    {
+      "name": "gpt-oss:20b",
+      "kind": "moe",
+      "total_params": "20B",
+      "active_params": "3.6B",
+      "disk_gb": 13.79,
+      "resident_gb": 12.73,
+      "load_s": 2.38,
+      "gen_tok_s": 88.5,
+      "prompt_tok_s": 893.7,
+      "quality": 1.0,
+      "quality_mode": "thinking required",
+      "quality_metric": "exact match on 10 structured classification cases",
+      "samples": 3
+    }
+  ]
+}

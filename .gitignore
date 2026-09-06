@@ -22,3 +22,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# A global gitignore may exclude *.json. These are project data and must ship.
+!03-lab/*.json
+!source/package.json
+!source/package-lock.json
