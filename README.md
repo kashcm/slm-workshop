@@ -25,6 +25,9 @@ number themselves.
 ```
 01-deck/
   slm-class-deck.pptx          40 slides, timed to the two hour agenda
+  slm-advanced.pptx            30 slides, the advanced track for experienced teams:
+                               evaluation that holds up, mixture of experts, memory
+                               management, and production practice
   slm-first-principles.pptx    59 slides, the version that assumes no background.
                                Builds up from "what is a token" through types of
                                model, how they are made, running them, reliability,
@@ -39,16 +42,26 @@ number themselves.
 03-lab/
   slm_hands_on_lab.ipynb       self contained notebook, six labs, needs only
                                `requests` and a running Ollama
+  slm_advanced_lab.ipynb       three advanced labs: an evaluation harness with
+                               slices and error bars, a mixture of experts analysis,
+                               and a memory budget measured on your own machine
+  moe_measurements.json        recorded measurements the mixture of experts lab
+                               analyses, so nobody has to pull a large model
 
 04-handout/
   slm-field-card.html          one page decision reference for attendees to keep
+  slm-practices-card.html      the advanced track on one page: evaluation, mixture
+                               of experts, memory, and production practice
   slm-deep-dive-finetuning.html   companion deep dive on fine-tuning: when it is
   slm-deep-dive-finetuning.pdf    the right call, and a complete run end to end
 
 source/
   deck.js                      generator for the 40 slide deck
   deck-first-principles.js     generator for the 59 slide deck
-  build_nb.py                  generator for the notebook
+  deck-advanced.js             generator for the advanced deck
+  build_nb.py                  generator for the main notebook
+  build_advanced_nb.py         generator for the advanced notebook
+  measure_moe.py               records moe_measurements.json on your own hardware
 ```
 
 Content lives in the generators, so edit those and rebuild rather than editing the
@@ -58,7 +71,11 @@ built artifacts by hand:
 cd source && npm install          # once, for pptxgenjs
 node source/deck.js               # rewrites the 40 slide deck
 node source/deck-first-principles.js   # rewrites the 59 slide deck
-pip install nbformat && python3 source/build_nb.py   # rewrites the notebook
+node source/deck-advanced.js      # rewrites the advanced deck
+pip install nbformat
+python3 source/build_nb.py            # rewrites the main notebook
+python3 source/build_advanced_nb.py   # rewrites the advanced notebook
+python3 source/measure_moe.py         # re-records the measurements, optional
 ```
 
 PDF versions of the decks are not committed, because they go stale the moment a
@@ -95,6 +112,24 @@ Then open `03-lab/slm_hands_on_lab.ipynb` and run Lab 0.
 
 For a longer session, teach `slm-first-principles.pptx` before this agenda and
 run the same labs afterwards.
+
+## Agenda, advanced form
+
+For a room already running models in production. Skips the foundations entirely
+and assumes the vocabulary of the two hour class.
+
+| Time | Block | Mode |
+|---|---|---|
+| 0:00 to 0:20 | Evaluation that holds up: slices, judges, error bars, gates | lecture |
+| 0:20 to 0:40 | Lab 6: the honest eval harness | lab |
+| 0:40 to 0:55 | Mixture of experts: memory versus speed, and when it pays | lecture |
+| 0:55 to 1:10 | Lab 7: analyse a mixture of experts from recorded measurements | lab |
+| 1:10 to 1:30 | Memory management: cache arithmetic, levers, prefix reuse | lecture |
+| 1:30 to 1:45 | Lab 8: memory under pressure | lab |
+| 1:45 to 2:00 | Production practice and the advanced checklist | lecture |
+
+Uses `slm-advanced.pptx`, `03-lab/slm_advanced_lab.ipynb` and the practices card.
+Lab 7 needs no additional model, because it analyses recorded measurements.
 
 ## The labs
 

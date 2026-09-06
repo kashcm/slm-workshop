@@ -1,0 +1,253 @@
+<title>SLM Practices Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#F6F9F8; --surface:#FFFFFF; --sunk:#EDF2F1;
+    --ink:#0F1A1C; --ink-2:#42524F; --ink-3:#6E807C;
+    --rule:#D6E0DE; --rule-strong:#B9C7C4;
+    --sig:#C4400E; --sig-soft:#FBEBE4;
+    --good:#0B6E56; --good-soft:#E2F1EC;
+    --warn:#96620A; --warn-soft:#F7EEDD;
+    --bad:#A3300B; --bad-soft:#FAE3DA;
+    --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --body:"Source Sans 3","Segoe UI",Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular",Consolas,"Courier New",monospace;
+    --shadow:0 1px 2px rgba(15,26,28,.05), 0 8px 24px -16px rgba(15,26,28,.25);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0B1315; --surface:#111C1E; --sunk:#162427;
+      --ink:#E8F0EE; --ink-2:#AFC0BC; --ink-3:#7F918D;
+      --rule:#223437; --rule-strong:#31474B;
+      --sig:#F0794A; --sig-soft:#2A150E;
+      --good:#4FBF9B; --good-soft:#0C231C;
+      --warn:#DFAB55; --warn-soft:#2A2113;
+      --bad:#EE8156; --bad-soft:#2B1410;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0B1315; --surface:#111C1E; --sunk:#162427;
+    --ink:#E8F0EE; --ink-2:#AFC0BC; --ink-3:#7F918D;
+    --rule:#223437; --rule-strong:#31474B;
+    --sig:#F0794A; --sig-soft:#2A150E;
+    --good:#4FBF9B; --good-soft:#0C231C;
+    --warn:#DFAB55; --warn-soft:#2A2113;
+    --bad:#EE8156; --bad-soft:#2B1410;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground); color:var(--ink); font-family:var(--body);
+    font-size:15px; line-height:1.55; margin:0}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px 70px}
+  header{padding:44px 0 22px; border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--sig); margin:0 0 12px}
+  h1{font-family:var(--display); font-weight:700; font-size:clamp(32px,5vw,52px);
+    line-height:1.05; letter-spacing:-.02em; margin:0 0 12px}
+  .lede{font-size:16.5px; color:var(--ink-2); max-width:62ch; margin:0}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:18px; margin:26px 0}
+  .box{background:var(--surface); border:1px solid var(--rule); border-radius:5px;
+    padding:18px 20px; box-shadow:var(--shadow); break-inside:avoid}
+  .box h2{font-family:var(--display); font-size:15px; font-weight:600; margin:0 0 4px;
+    letter-spacing:.01em}
+  .box .n{font-family:var(--mono); font-size:10.5px; color:var(--sig);
+    letter-spacing:.12em; text-transform:uppercase; margin:0 0 10px}
+  ul{margin:0; padding-left:18px}
+  li{margin-bottom:7px; font-size:14px}
+  li b{font-weight:600}
+  .rule-line{border-left:3px solid var(--sig); padding-left:14px; margin:10px 0 0;
+    font-size:13.5px; color:var(--ink-2)}
+  .warnbox{background:var(--warn-soft); border-color:var(--rule); border-left:3px solid var(--warn)}
+  .goodbox{background:var(--good-soft); border-color:var(--rule); border-left:3px solid var(--good)}
+  code{font-family:var(--mono); font-size:.87em; background:var(--sunk); padding:1px 5px; border-radius:3px}
+  table{border-collapse:collapse; width:100%; font-size:13px; margin-top:8px}
+  th,td{padding:6px 9px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600}
+  tr:last-child td{border-bottom:none}
+  .num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+  footer{border-top:2px solid var(--ink); margin-top:34px; padding-top:20px;
+    font-size:13.5px; color:var(--ink-3)}
+  @media print{ body{background:#fff} .box{box-shadow:none} @page{size:A4 landscape;margin:12mm} }
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Small Language Models · Advanced track · Keep this one</p>
+  <h1>Practices Card</h1>
+  <p class="lede">The operational habits that decide whether a small model becomes a service or stays a demo. One page, in the order you will need them.</p>
+</header>
+
+<div class="grid">
+
+  <div class="box">
+    <p class="n">01 · Evaluation</p>
+    <h2>Compose the set, do not sample it</h2>
+    <table>
+      <tr><th>Slice</th><th>Share</th></tr>
+      <tr><td>Representative traffic</td><td class="num">50%</td></tr>
+      <tr><td>Known hard cases</td><td class="num">20%</td></tr>
+      <tr><td>Adversarial</td><td class="num">15%</td></tr>
+      <tr><td>Boundary</td><td class="num">10%</td></tr>
+      <tr><td>Should refuse or escalate</td><td class="num">5%</td></tr>
+    </table>
+    <p class="rule-line">Every production incident becomes a permanent case. Score per slice, because the aggregate hides the failures that matter.</p>
+  </div>
+
+  <div class="box">
+    <p class="n">02 · Evaluation</p>
+    <h2>Cheapest check that works</h2>
+    <ul>
+      <li><b>Schema and type checks.</b> Free, deterministic, catches most pipeline breakage.</li>
+      <li><b>Exact or normalised match.</b> Free, needs a known answer.</li>
+      <li><b>Programmatic properties.</b> No invented identifiers, totals reconcile, citations resolve.</li>
+      <li><b>Similarity to a reference.</b> Cheap and noisy. A signal, never a gate.</li>
+      <li><b>Model as judge.</b> Expensive and biased. Last resort, and only once validated.</li>
+    </ul>
+  </div>
+
+  <div class="box warnbox">
+    <p class="n">03 · Evaluation</p>
+    <h2>Validate the judge or do not use it</h2>
+    <ul>
+      <li>Hand label 50 cases and measure agreement. Below about <b>80 percent</b> it cannot be a gate.</li>
+      <li>Control position bias by running both orders. Control length bias. Control self preference.</li>
+      <li><b>Never let a model judge its own family</b> in a gate.</li>
+      <li>Pin the judge and its version. A silently upgraded judge invalidates your history.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">04 · Evaluation</p>
+    <h2>Every number needs an interval</h2>
+    <p style="margin:0 0 8px;font-size:14px">On 100 cases at 80 percent, the 95 percent interval is roughly <b>plus or minus 9 points</b>. A move from 80 to 84 is not evidence.</p>
+    <ul>
+      <li>Interval is about <code>2 x sqrt(p(1-p)/n)</code>.</li>
+      <li>For two models, compare <b>per case</b>, not per aggregate. Far more sensitive.</li>
+      <li>Fix seed and temperature, or you are measuring sampling noise too.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">05 · Mixture of experts</p>
+    <h2>Memory follows total, speed follows active</h2>
+    <table>
+      <tr><th>Shape</th><th>Memory like</th><th>Speed like</th></tr>
+      <tr><td>8B dense</td><td class="num">8B</td><td class="num">8B</td></tr>
+      <tr><td>30B total, 3B active</td><td class="num">30B</td><td class="num">~3B</td></tr>
+      <tr><td>20B total, 4B active</td><td class="num">20B</td><td class="num">~4B</td></tr>
+    </table>
+    <p class="rule-line">If you own the memory, it is a very good deal. If memory is your binding constraint, it is the worst of both worlds.</p>
+  </div>
+
+  <div class="box">
+    <p class="n">06 · Mixture of experts</p>
+    <h2>What only shows up in production</h2>
+    <ul>
+      <li>Load time follows total size, so it is slow to start and slow to swap. Keep it resident.</li>
+      <li>Expert offloading costs <b>tail</b> latency, not average.</li>
+      <li>Batching is less predictable when a batch activates many experts at once.</li>
+      <li>Benchmark at your real concurrency. Batch size one flatters it.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">07 · Memory</p>
+    <h2>Weights are the part you budgeted for</h2>
+    <p style="margin:0 0 8px;font-size:14px"><code>kv ~= 2 x layers x kv_heads x head_dim x context x batch x bytes</code></p>
+    <ul>
+      <li>Cache grows with context <b>and</b> concurrency. They are one budget.</li>
+      <li>Long context and high concurrency are the same problem in different clothes.</li>
+      <li>Reserve <b>20 percent headroom</b> for fragmentation, or you will fail to allocate after hours of traffic.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">08 · Memory</p>
+    <h2>Levers, cheapest first</h2>
+    <ul>
+      <li>Send less context. Usually free and usually improves quality.</li>
+      <li>Cap the context limit, then guard long inputs so the answer is never truncated.</li>
+      <li>Quantize the cache to 8 bit. Roughly halves it.</li>
+      <li>Reduce concurrency. Then quantize weights further. Then offload.</li>
+      <li>Use a smaller model, which is the honest answer more often than people admit.</li>
+    </ul>
+  </div>
+
+  <div class="box goodbox">
+    <p class="n">09 · Memory</p>
+    <h2>Get the prefix back</h2>
+    <ul>
+      <li>Order the prompt: <b>stable first</b>, volatile last.</li>
+      <li>Keep the prefix byte stable. <b>One timestamp at the top discards the whole cache.</b></li>
+      <li>Pin a session to one worker, or the cache you built is on another machine.</li>
+    </ul>
+    <p class="rule-line">Measured in the lab: 0.15s of prompt processing became 0.04s when the prefix was reused, and stayed at 0.14s when a timestamp broke it.</p>
+  </div>
+
+  <div class="box">
+    <p class="n">10 · Production</p>
+    <h2>Version prompts like code</h2>
+    <ul>
+      <li>Prompts live in the repository, reviewed, and gated by the eval on every change.</li>
+      <li>Log <b>prompt version, model id and decoding parameters</b> together. All three define behaviour.</li>
+      <li>If you cannot say what produced an output six weeks ago, you have a long running demo.</li>
+    </ul>
+  </div>
+
+  <div class="box warnbox">
+    <p class="n">11 · Production</p>
+    <h2>Fail without amplifying</h2>
+    <ul>
+      <li><b>Token cap on every call.</b> An unbounded generation is an unbounded outage.</li>
+      <li>Timeouts shorter than caller patience. Retries bounded and jittered.</li>
+      <li><b>Change something on retry.</b> An identical call at temperature zero returns the identical failure.</li>
+      <li>Circuit break to the deterministic path. Make escalation a budget, not a fallback.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">12 · Production</p>
+    <h2>Upgrades are migrations</h2>
+    <ul>
+      <li>Frozen golden set, identical harness and conditions.</li>
+      <li>Compare <b>per case</b>. Find what broke, not whether the mean moved.</li>
+      <li>Shadow on live traffic, then canary behind the same gates.</li>
+      <li>Keep the old model deployable for a full traffic cycle.</li>
+      <li>Prompts are tuned to a model. Unchanged prompt plus new model is a hope, not an experiment.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <p class="n">13 · Production</p>
+    <h2>Security, short version</h2>
+    <ul>
+      <li><b>Treat every model output as untrusted input</b> to the next stage. Always.</li>
+      <li>Never let model output authorise an action. Tools carry their own authorisation.</li>
+      <li>Redact before logging. Scrub before training. Both are irreversible afterwards.</li>
+      <li>Pin model versions and digests. Record the licence per model.</li>
+    </ul>
+  </div>
+
+  <div class="box goodbox">
+    <p class="n">14 · The one that outranks the rest</p>
+    <h2>Cut N before you buy parameters</h2>
+    <table>
+      <tr><th>per step</th><th>5 steps</th><th>10 steps</th><th>20 steps</th></tr>
+      <tr><td class="num">0.90</td><td class="num">59%</td><td class="num">35%</td><td class="num">12%</td></tr>
+      <tr><td class="num">0.95</td><td class="num">77%</td><td class="num">60%</td><td class="num">36%</td></tr>
+      <tr><td class="num">0.99</td><td class="num">95%</td><td class="num">90%</td><td class="num">82%</td></tr>
+    </table>
+    <p class="rule-line">Reliability comes from architecture, not parameters. Decompose, verify, then buy the cheapest model that clears the bar.</p>
+  </div>
+
+</div>
+
+<footer>
+  Companion to the SLM Field Card and the advanced track. Model names, prices and leaderboard
+  positions move quickly. Everything on this page does not.
+</footer>
+</div>
