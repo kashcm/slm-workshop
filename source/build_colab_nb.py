@@ -1,7 +1,7 @@
 """Generate the Colab flavour of the advanced lab.
 
-Takes 03-lab/slm_advanced_lab.ipynb and produces
-03-lab/slm_advanced_lab_colab.ipynb by:
+Takes 02-lab/slm_advanced_lab.ipynb and produces
+02-lab/slm_advanced_lab_colab.ipynb by:
 
   1. prepending a setup section that installs and starts Ollama inside the
      Colab VM and pulls the models
@@ -16,10 +16,10 @@ import os
 import nbformat as nbf
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.join(HERE, "..", "03-lab", "slm_advanced_lab.ipynb")
-OUT = os.path.join(HERE, "..", "03-lab", "slm_advanced_lab_colab.ipynb")
+SRC = os.path.join(HERE, "..", "02-lab", "slm_advanced_lab.ipynb")
+OUT = os.path.join(HERE, "..", "02-lab", "slm_advanced_lab_colab.ipynb")
 RAW = ("https://raw.githubusercontent.com/kashcm/slm-workshop/main/"
-       "03-lab/moe_measurements.json")
+       "02-lab/moe_measurements.json")
 
 SETUP_MD = """
 # Small Language Models: Advanced Lab

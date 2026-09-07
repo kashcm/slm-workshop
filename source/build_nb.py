@@ -852,7 +852,7 @@ nb = new_notebook(cells=C, metadata={
     "language_info": {"name": "python", "version": "3.11"},
 })
 import os
-_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "03-lab", "slm_hands_on_lab.ipynb")
+_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "02-lab", "slm_hands_on_lab.ipynb")
 nbf.write(nb, _out)
 print("wrote", os.path.normpath(_out))
 print("wrote notebook,", len(C), "cells")

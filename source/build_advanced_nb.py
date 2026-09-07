@@ -1,6 +1,6 @@
 """Generator for the advanced lab notebook.
 
-Builds 03-lab/slm_advanced_lab.ipynb with three labs:
+Builds 02-lab/slm_advanced_lab.ipynb with three labs:
   6  an evaluation harness you could defend in a review
   7  mixture of experts, analysed from recorded measurements
   8  memory under pressure
@@ -353,7 +353,7 @@ deploy?**
 code('''
 DATA = Path("moe_measurements.json")
 if not DATA.exists():
-    DATA = Path("03-lab/moe_measurements.json")
+    DATA = Path("02-lab/moe_measurements.json")
 meas = json.loads(DATA.read_text())
 
 # Only rows with a real resident measurement are usable. A row of zeros means the
@@ -632,7 +632,7 @@ nb["metadata"] = {
     "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
     "language_info": {"name": "python", "version": "3.11"},
 }
-_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "03-lab",
+_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "02-lab",
                     "slm_advanced_lab.ipynb")
 nbf.write(nb, _out)
 print("wrote", os.path.normpath(_out), "-", len(C), "cells")

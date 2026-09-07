@@ -5,6 +5,38 @@ half a day if you teach the foundations deck as well. Everything in the lab runs
 locally through Ollama: no API keys, no cloud accounts, and no network at all
 once the models are pulled.
 
+## For students, start here
+
+**Fastest path, nothing to install (Google Colab).** Runs in your browser; Colab
+installs Ollama in the virtual machine and pulls two small models for you:
+
+> **Open in Colab:**
+> https://colab.research.google.com/github/kashcm/slm-workshop/blob/main/02-lab/slm_advanced_lab_colab.ipynb
+
+Click **Copy to Drive**, then run the first three setup cells. Nothing to install
+on your own machine.
+
+**On your own laptop (the main hands-on lab).**
+
+1. Install Ollama: https://ollama.com/download
+2. Start it with a real context window (this line matters most):
+
+   ```bash
+   OLLAMA_CONTEXT_LENGTH=32000 ollama serve
+   ```
+
+3. Pull the models and check your setup:
+
+   ```bash
+   ollama pull granite4.2:3b
+   ollama pull granite4.2:8b
+   python3 02-lab/check_setup.py
+   ```
+
+4. Open `02-lab/slm_hands_on_lab.ipynb` and run Lab 0.
+
+Keep the one-page references in `03-handout/`: the field card and the practices card.
+
 ## The thesis
 
 Reliability comes from architecture, not from parameters. So decompose the task,
@@ -32,21 +64,9 @@ number themselves.
                                Builds up from "what is a token" through types of
                                model, how they are made, running them, reliability,
                                adapting, evaluating and deciding.
+  slm-full-track.pptx          14 slides, the whole track condensed into one deck
 
-02-facilitator/
-  RUN_OF_SHOW.md               minute by minute talk track, debrief prompts, prep
-                               checklist, failure modes, and the measured baseline
-                               you should expect from a clean run
-  PRE-CLASS-EMAIL.md           copy and paste setup instructions for attendees
-  ADVANCED_RUN_SHEET.md        run sheet for the advanced track: morning checklist,
-                               timing, what each lab should produce, failure modes
-  ADVANCED_PRE_CLASS.md        setup instructions for the advanced track, including
-                               distributing models on a USB stick
-  ADVANCED_TALK_TRACK.md       slide by slide talk track, with the opening and the
-                               close written out, plus the questions an experienced
-                               room actually asks
-
-03-lab/
+02-lab/
   slm_hands_on_lab.ipynb       self contained notebook, six labs, needs only
                                `requests` and a running Ollama
   slm_advanced_lab.ipynb       three advanced labs: an evaluation harness with
@@ -62,7 +82,7 @@ number themselves.
                                Python, requests, Ollama, models and a real
                                generation, and prints exactly what to fix
 
-04-handout/
+03-handout/
   slm-field-card.html          one page decision reference for attendees to keep
   slm-practices-card.html      the advanced track on one page: evaluation, mixture
                                of experts, memory, and production practice
@@ -115,10 +135,10 @@ curl http://localhost:11434/api/version
 Verify everything at once with:
 
 ```bash
-python3 03-lab/check_setup.py
+python3 02-lab/check_setup.py
 ```
 
-Then open `03-lab/slm_hands_on_lab.ipynb` and run Lab 0.
+Then open `02-lab/slm_hands_on_lab.ipynb` and run Lab 0.
 
 The advanced track needs only `granite4.2:3b` and `granite4.2:8b`, about 7.5 GB,
 because its mixture of experts lab reads recorded measurements instead of pulling
@@ -155,7 +175,7 @@ and assumes the vocabulary of the two hour class.
 | 1:30 to 1:45 | Lab 8: memory under pressure | lab |
 | 1:45 to 2:00 | Production practice and the advanced checklist | lecture |
 
-Uses `slm-advanced.pptx`, `03-lab/slm_advanced_lab.ipynb` and the practices card.
+Uses `slm-advanced.pptx`, `02-lab/slm_advanced_lab.ipynb` and the practices card.
 Lab 7 needs no additional model, because it analyses recorded measurements.
 
 ## The labs
@@ -196,8 +216,8 @@ over twenty.
    Eight gigabytes times twenty five laptops will kill a conference room access
    point. This is the most likely failure and the cheapest one to prevent.
 
-Model tags, API prices and leaderboard positions all move quickly. The last
-section of `RUN_OF_SHOW.md` lists what to re-verify before presenting.
+Model tags, API prices and leaderboard positions all move quickly. Re-verify the
+exact tags, prices and leaderboard numbers the week you present.
 
 ## A note on the reasoning models
 

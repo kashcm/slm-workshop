@@ -1,6 +1,6 @@
 """Record a mixture of experts model against dense models on identical prompts.
 
-Produces 03-lab/moe_measurements.json, which Lab 7 analyses. Re-run this on your
+Produces 02-lab/moe_measurements.json, which Lab 7 analyses. Re-run this on your
 own hardware if you want the lab to reflect your machine rather than the recorded
 one. Every number in the output is measured, none are estimated.
 
@@ -186,7 +186,7 @@ def main():
         except Exception as e:
             print(f"    SKIPPED {name}: {e}")
             out.setdefault("missing", []).append(name)
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "03-lab",
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "02-lab",
                         "moe_measurements.json")
     with open(path, "w") as f:
         json.dump(out, f, indent=2)

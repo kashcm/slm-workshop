@@ -14,6 +14,9 @@ venv/
 # Built PDFs are exported from the decks and go stale on every rebuild
 01-deck/*.pdf
 
+# Facilitator-only material — local, never shared with students
+facilitator/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -24,6 +27,6 @@ Thumbs.db
 *.swp
 
 # A global gitignore may exclude *.json. These are project data and must ship.
-!03-lab/*.json
+!02-lab/*.json
 !source/package.json
 !source/package-lock.json
